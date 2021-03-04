@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,10 +11,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('iMusic'),
+        title: const Text('iMusic'),
       ),
       body: Container(
         padding: EdgeInsets.all(20.0),
+        child: StreamBuilder<bool>(
+          stream: AudioService.runningStream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.active) {
+              return SizedBox();
+            }
+            final running = snapshot.data ?? false;
+          },
+        ),
 
       ),
     );
