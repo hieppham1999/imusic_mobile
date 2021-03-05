@@ -15,17 +15,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Container(
         padding: EdgeInsets.all(20.0),
-        child: StreamBuilder<bool>(
-          stream: AudioService.runningStream,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.active) {
-              return SizedBox();
-            }
-            final running = snapshot.data ?? false;
-          },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(onPressed: start, child: Text("Start")),
+            ElevatedButton(onPressed: stop, child: Text("Stop")),
+          ],
         ),
-
       ),
     );
   }
+  start() =>
+      AudioService.start(backgroundTaskEntrypoint: _backgroundTaskEntrypoint);
+  stop() => AudioService.stop();
 }
