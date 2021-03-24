@@ -1,32 +1,15 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-// class SeekBar extends StatefulWidget {
-//   final Duration duration;
-//   final Duration position;
-//   final ValueChanged<Duration> onChanged;
-//   final ValueChanged<Duration> onChangeEnd;
-//
-//   SeekBar({
-//     @required this.duration,
-//     @required this.position,
-//     this.onChanged,
-//     this.onChangeEnd,
-//   });
-//
-//   @override
-//   _SeekBarState createState() => _SeekBarState();
-// }
-
 class SeekBar extends StatefulWidget {
   final Duration duration;
   final Duration position;
-  final ValueChanged<Duration> onChanged;
-  final ValueChanged<Duration> onChangeEnd;
+  final ValueChanged<Duration>? onChanged;
+  final ValueChanged<Duration>? onChangeEnd;
 
   SeekBar({
-    @required this.duration,
-    @required this.position,
+    required this.duration,
+    required this.position,
     this.onChanged,
     this.onChangeEnd,
   });
@@ -36,11 +19,11 @@ class SeekBar extends StatefulWidget {
 }
 
 class _SeekBarState extends State<SeekBar> {
-  double _dragValue;
+  double? _dragValue;
   bool _dragging = false;
   @override
   Widget build(BuildContext context) {
-    final value = min(_dragValue ?? widget.position?.inMilliseconds?.toDouble(),
+    final value = min(_dragValue ?? widget.position.inMilliseconds.toDouble(),
         widget.duration.inMilliseconds.toDouble());
     if (_dragValue != null && !_dragging) {
       _dragValue = null;
@@ -59,12 +42,12 @@ class _SeekBarState extends State<SeekBar> {
               _dragValue = value;
             });
             if (widget.onChanged != null) {
-              widget.onChanged(Duration(milliseconds: value.round()));
+              widget.onChanged!(Duration(milliseconds: value.round()));
             }
           },
           onChangeEnd: (value) {
             if (widget.onChangeEnd != null) {
-              widget.onChangeEnd(Duration(milliseconds: value.round()));
+              widget.onChangeEnd!(Duration(milliseconds: value.round()));
             }
             _dragging = false;
           },

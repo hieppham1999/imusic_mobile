@@ -17,17 +17,16 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   final _mediaLibrary = MediaLibrary();
   final _player = AudioPlayer();
-  final _completer = Completer();
-  AudioProcessingState _skipState;
-  Seeker _seeker;
-  StreamSubscription<PlaybackEvent> _eventSubscription;
+  AudioProcessingState? _skipState;
+  Seeker? _seeker;
+  late StreamSubscription<PlaybackEvent> _eventSubscription;
 
   List<MediaItem> get queue => _mediaLibrary.items;
-  int get index => _player.currentIndex;
-  MediaItem get mediaItem => index == null ? null : queue[index];
+  int? get index => _player.currentIndex;
+  MediaItem? get mediaItem => index == null ? null : queue[index!];
 
   @override
-  Future<void> onStart(Map<String, dynamic> params) async {
+  Future<void> onStart(Map<String, dynamic>? params) async {
 
     // Broadcast media item changes.
     _player.currentIndexStream.listen((index) {
@@ -71,20 +70,6 @@ class AudioPlayerTask extends BackgroundAudioTask{
     }
   }
 
-  //   AudioServiceBackground.setState(
-  //       controls: [MediaControl.pause, MediaControl.stop],
-  //       playing: true,
-  //       processingState: AudioProcessingState.connecting);
-  //   // Connect to the URL
-  //   await _player.setUrl("https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3");
-  //   // Now we're ready to play
-  //   _player.play();
-  //   // Broadcast that we're playing, and what controls are available.
-  //   AudioServiceBackground.setState(
-  //       controls: [MediaControl.pause, MediaControl.stop],
-  //       playing: true,
-  //       processingState: AudioProcessingState.ready);
-  // }
 
   @override
   Future<void> onSkipToQueueItem(String mediaId) async{
@@ -98,7 +83,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
     // previous. This variable holds the preferred state to send instead of
     // buffering during a skip, and it is cleared as soon as the player exits
     // buffering (see the listener in onStart).
-    _skipState = newIndex > index
+    _skipState = newIndex > index!
         ? AudioProcessingState.skippingToNext
         : AudioProcessingState.skippingToPrevious;
     // This jumps to the beginning of the queue item at newIndex.
@@ -129,26 +114,12 @@ class AudioPlayerTask extends BackgroundAudioTask{
   }
 
   @override
-  Future<void> onPlay()  {
-    // // Broadcast that we're playing, and what controls are available.
-    // AudioServiceBackground.setState(
-    //     controls: [MediaControl.pause, MediaControl.stop],
-    //     playing: true,
-    //     processingState: AudioProcessingState.ready);
-    // // Start playing audio.
-    // await _player.play();
+  Future<void> onPlay()  async {
     _player.play();
   }
 
   @override
   Future<void> onPause() async {
-    // // Broadcast that we're paused, and what controls are available.
-    // AudioServiceBackground.setState(
-    //     controls: [MediaControl.play, MediaControl.stop],
-    //     playing: false,
-    //     processingState: AudioProcessingState.ready);
-    // // Pause the audio.
-    // await _player.pause();
     _player.pause();
   }
 
@@ -172,10 +143,11 @@ class AudioPlayerTask extends BackgroundAudioTask{
     var newPosition = _player.position + offset;
     // Make sure we don't jump out of bounds.
     if (newPosition < Duration.zero) newPosition = Duration.zero;
-    if (newPosition > mediaItem.duration) newPosition = mediaItem.duration;
+    if (newPosition > mediaItem!.duration!) newPosition = mediaItem!.duration!;
     // Perform the jump via a seek.
     await _player.seek(newPosition);
   }
+
 
   /// Begins or stops a continuous seek in [direction]. After it begins it will
   /// continue seeking forward or backward by 10 seconds within the audio, at
@@ -184,7 +156,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
     _seeker?.stop();
     if (begin) {
       _seeker = Seeker(_player, Duration(seconds: 10 * direction),
-          Duration(seconds: 1), mediaItem)
+          Duration(seconds: 1), mediaItem!)
         ..start();
     }
   }
@@ -215,7 +187,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
   /// Maps just_audio's processing state into into audio_service's playing
   /// state. If we are in the middle of a skip, we use [_skipState] instead.
   AudioProcessingState _getProcessingState() {
-    if (_skipState != null) return _skipState;
+    if (_skipState != null) return _skipState!;
     switch (_player.processingState) {
       case ProcessingState.idle:
         return AudioProcessingState.stopped;

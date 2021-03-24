@@ -8,8 +8,7 @@ class MediaLibrary {
       title: "A Salute To Head-Scratching Science",
       artist: "Science Friday and WNYC Studios",
       duration: Duration(milliseconds: 5739820),
-      artUri:
-      "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
+      artUri: Uri.parse("https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
     ),
     MediaItem(
       id: "https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3",
@@ -17,8 +16,15 @@ class MediaLibrary {
       title: "From Cat Rheology To Operatic Incompetence",
       artist: "Science Friday and WNYC Studios",
       duration: Duration(milliseconds: 2856950),
-      artUri:
-      "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
+      artUri: Uri.parse("https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
+    ),
+    MediaItem(
+      id: "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3",
+      album: "Ninja Tuna",
+      title: "Kalimba",
+      artist: "Mr. Scruff",
+      duration: Duration(milliseconds: 348000),
+      artUri: null,
     ),
   ];
 
