@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:audio_session/audio_session.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:imusic_mobile/MediaLibrary.dart';
 import 'package:imusic_mobile/Seeker.dart';
@@ -19,7 +18,9 @@ class AudioPlayerTask extends BackgroundAudioTask{
   final _player = AudioPlayer();
   AudioProcessingState? _skipState;
   Seeker? _seeker;
+  List<MediaItem>? _queue;
   late StreamSubscription<PlaybackEvent> _eventSubscription;
+
 
   List<MediaItem> get queue => _mediaLibrary.items;
   int? get index => _player.currentIndex;
@@ -202,5 +203,12 @@ class AudioPlayerTask extends BackgroundAudioTask{
       default:
         throw Exception("Invalid state: ${_player.processingState}");
     }
+  }
+
+  @override
+  Future<void> onAddQueueItem(MediaItem mediaItem) {
+    _queue?.add(mediaItem);
+    AudioServiceBackground.setQueue(_queue!);
+    return super.onAddQueueItem(mediaItem);
   }
 }

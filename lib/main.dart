@@ -1,9 +1,19 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/HomeScreen.dart';
+import 'package:imusic_mobile/music_player.dart';
+import 'package:imusic_mobile/services/auth.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider(create: (context) => Auth()),
+            ],
+            child: MyApp(),
+          )
+      );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,9 +21,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Audio Service Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'iMusic',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: AudioServiceWidget(child: HomeScreen()),
+      home: HomeScreen(),
     );
   }
 }

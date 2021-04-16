@@ -19,14 +19,16 @@ class MediaLibrary {
       artUri: Uri.parse("https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
     ),
     MediaItem(
-      id: "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3",
-      album: "Ninja Tuna",
-      title: "Kalimba",
-      artist: "Mr. Scruff",
-      duration: Duration(milliseconds: 348000),
+      id: "https://1285a08e157e.ngrok.io/storage/media/songs/24H---LyLy;-Magazine.mp3",
+      album: "24Ha",
+      title: "24H",
+      artist: "Lyly; The Magazine",
+      duration: Duration(milliseconds: 257000),
       artUri: null,
     ),
   ];
 
   List<MediaItem> get items => _items;
+
+  void onAddQueueItem
 }
