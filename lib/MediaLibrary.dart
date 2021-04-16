@@ -30,5 +30,5 @@ class MediaLibrary {
 
   List<MediaItem> get items => _items;
 
-  void onAddQueueItem
+
 }
