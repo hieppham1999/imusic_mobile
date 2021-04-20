@@ -28,21 +28,22 @@ class SideDrawer extends StatelessWidget {
               child: Column(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.white,
+                    // backgroundColor: Colors.white,
+                    backgroundImage:  NetworkImage(auth.user!.avatar),
                     radius: 30,
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   Text(
-                    "Phạm Tuấn Hiệp",
+                    ' ${auth.user!.name} (${auth.user!.role})' ,
                     style: TextStyle(color: Colors.white),
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   Text(
-                    "hieppham1999@gmail.com",
+                    auth.user!.email,
                     style: TextStyle(color: Colors.white),
                   ),
                 ],

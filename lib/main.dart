@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'iMusic',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomeScreen(),
+      home: AudioServiceWidget(child: HomeScreen()),
     );
   }
 }

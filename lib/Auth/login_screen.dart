@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
@@ -12,10 +14,31 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  // device info
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  late String? _deviceName;
+
+
   @override
   void initState() {
     // TODO: implement initState
+    getDeviceName();
     super.initState();
+  }
+
+  void getDeviceName () async {
+    try {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        _deviceName = androidInfo.model;
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        _deviceName = iosInfo.utsname.machine;
+      }
+
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -52,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Map creds = {
                       'email' : _emailController.text,
                       'password' : _passwordController.text,
-                      'device' : 'mobile',
+                      'device_name' : _deviceName ?? 'unknown',
                     };
                     if (_formKey.currentState!.validate()) {
                       Provider.of<Auth>(context, listen: false).

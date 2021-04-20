@@ -21,6 +21,7 @@ class SeekBar extends StatefulWidget {
 class _SeekBarState extends State<SeekBar> {
   double? _dragValue;
   bool _dragging = false;
+
   @override
   Widget build(BuildContext context) {
     final value = min(_dragValue ?? widget.position.inMilliseconds.toDouble(),
@@ -65,5 +66,6 @@ class _SeekBarState extends State<SeekBar> {
       ],
     );
   }
+
   Duration get _remaining => widget.duration - widget.position;
 }

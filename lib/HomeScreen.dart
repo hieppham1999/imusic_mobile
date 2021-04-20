@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:imusic_mobile/pages/genre_tab.dart';
 import 'package:imusic_mobile/pages/home_tab.dart';
 import 'package:imusic_mobile/pages/new_songs_tab.dart';
 import 'SideDrawer.dart';
+import 'components/now_playing_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:imusic_mobile/services/auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,8 +16,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  var scaffoldKey = GlobalKey<ScaffoldState>();
 
+  final storage = new FlutterSecureStorage();
   final List<Tab> myTabs = <Tab>[
     Tab(text: 'Trang Chủ'),
     Tab(text: 'Thể loại'),
@@ -25,7 +29,14 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     _tabController = new TabController(vsync: this, length: myTabs.length);
+    readToken();
     super.initState();
+  }
+
+  void readToken() async {
+    String? token = await storage.read(key: 'token');
+    Provider.of<Auth>(context, listen: false).tryToken(token : token);
+    print(token);
   }
 
   @override
@@ -56,8 +67,8 @@ class _HomeScreenState extends State<HomeScreen>
           controller: _tabController,
         ),
       ),
-      key: scaffoldKey,
       drawer: SideDrawer(),
+      bottomNavigationBar: nowPlayingBar(context),
       body:
           SafeArea(
             child: TabBarView(

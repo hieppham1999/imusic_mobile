@@ -7,7 +7,7 @@ import 'package:imusic_mobile/Seeker.dart';
 
 
 // Must be a top-level function
-void backgroundTaskEntrypoint() {
+void audioPlayerTaskEntrypoint() {
   AudioServiceBackground.run(() => AudioPlayerTask());
 }
 
@@ -17,12 +17,14 @@ class AudioPlayerTask extends BackgroundAudioTask{
   final _mediaLibrary = MediaLibrary();
   final _player = AudioPlayer();
   AudioProcessingState? _skipState;
+
   Seeker? _seeker;
-  List<MediaItem>? _queue;
   late StreamSubscription<PlaybackEvent> _eventSubscription;
 
 
-  List<MediaItem> get queue => _mediaLibrary.items;
+  // List<MediaItem> get queue => _mediaLibrary.items;
+  List<MediaItem> queue = [];
+  List<MediaItem> singleMediaQueue = [];
   int? get index => _player.currentIndex;
   MediaItem? get mediaItem => index == null ? null : queue[index!];
 
@@ -56,19 +58,19 @@ class AudioPlayerTask extends BackgroundAudioTask{
       }
     });
 
-    // Load and broadcast the queue
-    AudioServiceBackground.setQueue(queue);
-    try {
-      await _player.setAudioSource(ConcatenatingAudioSource(
-        children:
-        queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
-      ));
-      // In this example, we automatically start playing on start.
-      onPlay();
-    } catch (e) {
-      print("Error: $e");
-      onStop();
-    }
+    // // Load and broadcast the queue
+    // AudioServiceBackground.setQueue(queue);
+    // try {
+    //   await _player.setAudioSource(ConcatenatingAudioSource(
+    //     children:
+    //     queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+    //   ));
+    //   // In this example, we automatically start playing on start.
+    //   onPlay();
+    // } catch (e) {
+    //   print("Error: $e");
+    //   onStop();
+    // }
   }
 
 
@@ -91,19 +93,11 @@ class AudioPlayerTask extends BackgroundAudioTask{
     _player.seek(Duration.zero, index: newIndex);
     // Demonstrate custom events.
     AudioServiceBackground.sendCustomEvent('skip to $newIndex');
+    onPlay();
   }
 
   @override
   Future<void> onStop() async {
-    // // Stop playing audio
-    // await _player.stop();
-    // // Broadcast that we've stopped.
-    // await AudioServiceBackground.setState(
-    //     controls: [],
-    //     playing: false,
-    //     processingState: AudioProcessingState.stopped);
-    // // Shut down this background task
-    // await super.onStop();
     await _player.dispose();
     _eventSubscription.cancel();
     // It is important to wait for this state to be broadcast before we shut
@@ -205,10 +199,22 @@ class AudioPlayerTask extends BackgroundAudioTask{
     }
   }
 
+
   @override
-  Future<void> onAddQueueItem(MediaItem mediaItem) {
-    _queue?.add(mediaItem);
-    AudioServiceBackground.setQueue(_queue!);
+  Future<void> onAddQueueItem(MediaItem mediaItem) async {
+      queue.add(mediaItem);
+      await AudioServiceBackground.setQueue(queue);
+    try {
+      await _player.setAudioSource(ConcatenatingAudioSource(
+        children:
+        queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+      ));
+    } catch (e) {
+      print("Error: $e");
+      onStop();
+    }
+
+
     return super.onAddQueueItem(mediaItem);
   }
 }
