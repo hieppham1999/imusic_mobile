@@ -17,7 +17,7 @@ class Auth extends ChangeNotifier {
   void login({required Map creds}) async {
     print(creds);
     try {
-      Dio.Response response = await dio().post('/sanctum/token', data: creds);
+      Dio.Response response = await dio().post('/auth/login', data: creds);
       print(response.data.toString());
 
       String token = response.data.toString();
@@ -32,7 +32,7 @@ class Auth extends ChangeNotifier {
       return;
     } else {
       try {
-        Dio.Response response = await dio().get('/user',
+        Dio.Response response = await dio().get('/me',
             options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
         this._isLoggedIn = true;
         this._user = User.fromJson(response.data);
@@ -41,6 +41,7 @@ class Auth extends ChangeNotifier {
         notifyListeners();
         print(_user);
       } catch (e) {
+        cleanUp();
         print(e);
       }
     }
@@ -52,7 +53,7 @@ class Auth extends ChangeNotifier {
 
   void logout() async{
     try {
-      Dio.Response response = await dio().get('/user/revoke' ,
+      Dio.Response response = await dio().get('/auth/logout' ,
         options: Dio.Options(headers: {'Authorization' : 'Bearer $_token'}));
 
       cleanUp();

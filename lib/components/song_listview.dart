@@ -13,7 +13,15 @@ Widget songListView(BuildContext context, MediaItem item) {
         child: Card(
           child: Wrap(
             children: <Widget>[
-              Image.network(item.artUri.toString()),
+              Container(
+                height: 150,
+                width: 150,
+                child: FadeInImage(image: NetworkImage(item.artUri.toString()), placeholder: AssetImage('assets/images/no_artwork.png')),
+
+                // Image.network(
+                //     item.artUri.toString(),
+                // ),
+              ),
               ListTile(
                 title: Text(
                   item.title,

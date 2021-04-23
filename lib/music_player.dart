@@ -46,11 +46,11 @@ class _MusicPlayerState extends State<MusicPlayer> {
                         Container(
                           width: 300,
                           height: 300,
-                          child: (mediaItem?.artUri == null) ? Image(image: AssetImage('assets/images/no_artwork.png')) : Image.network(mediaItem!.artUri.toString(),
-                          ),
+                          child: FadeInImage(image: NetworkImage(mediaItem!.artUri.toString()), placeholder: AssetImage('assets/images/no_artwork.png')),
+                          // (mediaItem?.artUri == null) ? Image(image: AssetImage('assets/images/no_artwork.png')) : Image.network(mediaItem!.artUri.toString()),
                         ),
-                        Text(mediaItem?.title ?? "Unknown"),
-                        Text(mediaItem?.artist ?? "Unknown"),
+                        Text(mediaItem.title),
+                        Text(mediaItem.artist ?? "Unknown"),
                       ],
                     );
                   },
