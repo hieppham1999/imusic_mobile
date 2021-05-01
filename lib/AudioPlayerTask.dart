@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:imusic_mobile/MediaLibrary.dart';
 import 'package:imusic_mobile/Seeker.dart';
+import 'package:imusic_mobile/services/auth.dart';
 
 
 // Must be a top-level function
@@ -14,7 +14,6 @@ void audioPlayerTaskEntrypoint() {
 class AudioPlayerTask extends BackgroundAudioTask{
   //
 
-  final _mediaLibrary = MediaLibrary();
   final _player = AudioPlayer();
   AudioProcessingState? _skipState;
 
@@ -57,20 +56,6 @@ class AudioPlayerTask extends BackgroundAudioTask{
           break;
       }
     });
-
-    // // Load and broadcast the queue
-    // AudioServiceBackground.setQueue(queue);
-    // try {
-    //   await _player.setAudioSource(ConcatenatingAudioSource(
-    //     children:
-    //     queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
-    //   ));
-    //   // In this example, we automatically start playing on start.
-    //   onPlay();
-    // } catch (e) {
-    //   print("Error: $e");
-    //   onStop();
-    // }
   }
 
 
@@ -91,10 +76,13 @@ class AudioPlayerTask extends BackgroundAudioTask{
         : AudioProcessingState.skippingToPrevious;
     // This jumps to the beginning of the queue item at newIndex.
     _player.seek(Duration.zero, index: newIndex);
+
     // Demonstrate custom events.
     AudioServiceBackground.sendCustomEvent('skip to $newIndex');
+
     onPlay();
   }
+
 
   @override
   Future<void> onStop() async {

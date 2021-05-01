@@ -12,12 +12,48 @@ class SideDrawer extends StatelessWidget {
         return ListView(
           children: [
             ListTile(
-              title: Text('Login'),
+              title: Text('Tài Khoản'),),
+            ListTile(
+              title: Text('Đăng nhập'),
               leading: Icon(Icons.login),
               onTap: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => LoginScreen()));
               },
+            ),
+            ListTile(
+              title: Text('Danh sách nhạc'),),
+            ListTile(
+              title: Text('Nhạc Việt Nam'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc US - UK'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Nhật Bản'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Trung Quốc'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Hàn Quốc'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Pháp'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Nga'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc các nước khác'),
+              leading: Icon(Icons.music_note),
             ),
           ],
         );
@@ -53,6 +89,8 @@ class SideDrawer extends StatelessWidget {
               ),
             ),
             ListTile(
+              title: Text('Tài Khoản'),),
+            ListTile(
               title: Text('Logout'),
               leading: Icon(Icons.logout),
               onTap: () {
@@ -60,6 +98,41 @@ class SideDrawer extends StatelessWidget {
                     .logout();
               },
             ),
+            ListTile(
+              title: Text('Danh sách nhạc'),),
+            ListTile(
+              title: Text('Nhạc Việt Nam'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc US - UK'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Nhật Bản'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Trung Quốc'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Hàn Quốc'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Pháp'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc Nga'),
+              leading: Icon(Icons.music_note),
+            ),
+            ListTile(
+              title: Text('Nhạc các nước khác'),
+              leading: Icon(Icons.music_note),
+            ),
+
           ],
         );
       }

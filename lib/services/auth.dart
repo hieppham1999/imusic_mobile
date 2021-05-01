@@ -11,6 +11,7 @@ class Auth extends ChangeNotifier {
 
   bool get authenticated => _isLoggedIn;
   User? get user => _user;
+  String? get token => _token;
 
   final storage = new FlutterSecureStorage();
 

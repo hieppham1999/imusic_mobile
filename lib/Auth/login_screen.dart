@@ -58,11 +58,20 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(
+                  "iMusic",
+                  style: TextStyle(
+                    fontSize: 30
+                  ),
+              ),
               TextFormField(
                 controller: _emailController,
                 validator: (value) => value!.isEmpty ? 'Please enter valid email' : null
               ),
               TextFormField(
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  obscureText: true,
                   controller: _passwordController,
                   validator: (value) => value!.isEmpty ? 'Please enter password' : null
               ),

@@ -1,10 +1,12 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:imusic_mobile/models/myAudioService.dart';
+import 'package:imusic_mobile/models/myMediaItem.dart';
 
 import '../AudioPlayerTask.dart';
 import '../music_player.dart';
 
-Widget songListView(BuildContext context, MediaItem item) {
+Widget songListView(BuildContext context, MyMediaItem item) {
   return Column(
     children: [
       Container(
@@ -42,7 +44,8 @@ Widget songListView(BuildContext context, MediaItem item) {
                   ));
 
                   await AudioService.addQueueItem(item);
-                  AudioService.skipToQueueItem(item.id);
+                  await MyAudioService.skipToQueueItemWithServerId(item.id, item.serverId);
+                  // AudioService.skipToQueueItem(item.id, item.serverId);
                 },
               )
             ],
