@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:imusic_mobile/pages/genre_tab.dart';
 import 'package:imusic_mobile/pages/home_tab.dart';
 import 'package:imusic_mobile/pages/new_songs_tab.dart';
+import 'package:imusic_mobile/utils/user_secure_storage.dart';
 import 'SideDrawer.dart';
 import 'components/now_playing_bar.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
 
-  final storage = new FlutterSecureStorage();
+  // final storage = new FlutterSecureStorage();
   final List<Tab> myTabs = <Tab>[
     Tab(text: 'Trang Chủ'),
     Tab(text: 'Thể loại'),
@@ -34,7 +35,8 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void readToken() async {
-    String? token = await storage.read(key: 'token');
+    // String? token = await storage.read(key: 'token');
+    String? token = await UserSecureStorage.getToken();
     Provider.of<Auth>(context, listen: false).tryToken(token : token);
     print(token);
   }

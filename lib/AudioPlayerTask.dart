@@ -1,9 +1,15 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:imusic_mobile/utils/user_secure_storage.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:imusic_mobile/Seeker.dart';
 import 'package:imusic_mobile/services/auth.dart';
+import 'package:dio/dio.dart' as Dio;
+import 'package:imusic_mobile/services/dio.dart';
+
+import 'models/myMediaItem.dart';
+
 
 
 // Must be a top-level function
@@ -13,6 +19,10 @@ void audioPlayerTaskEntrypoint() {
 
 class AudioPlayerTask extends BackgroundAudioTask{
   //
+
+  Timer? timer;
+
+  int playingTime = 0;
 
   final _player = AudioPlayer();
   AudioProcessingState? _skipState;
@@ -80,9 +90,34 @@ class AudioPlayerTask extends BackgroundAudioTask{
     // Demonstrate custom events.
     AudioServiceBackground.sendCustomEvent('skip to $newIndex');
 
+    playingTime = 0;
+
     onPlay();
   }
 
+  void _startTimer() {
+    if(timer != null) {
+      timer!.cancel();
+    }
+    timer = Timer.periodic(Duration(seconds: 1), (timer) async {
+      print('playing time: $playingTime');
+      if (playingTime <= 15) {
+        playingTime++;
+      } else {
+        // try {
+        //   String? token = await UserSecureStorage.getToken();
+        //   Dio.Response response = await dio().put('/me/listen/',
+        //       data: {'serverId' : mediaItem!.serverId},
+        //       options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
+        //   print(response);
+        //
+        // } catch (e, stacktrace) {
+        //   print('caught $e : $stacktrace');
+        // }
+        timer.cancel();
+      }
+    });
+  }
 
   @override
   Future<void> onStop() async {
@@ -99,11 +134,25 @@ class AudioPlayerTask extends BackgroundAudioTask{
   @override
   Future<void> onPlay()  async {
     _player.play();
+    // if (timer != null) {
+    //   timer.cancelTimer();
+    // }
+    // timer = MyTimer();
+    // timer.startTimer(15, (){
+    //   print('timer has reached the submitted value');
+    //   timer.cancelTimer();
+    // });
+    if (Auth().authenticated){
+      _startTimer();
+    }
   }
 
   @override
   Future<void> onPause() async {
     _player.pause();
+    if (timer!.isActive) {
+      timer!.cancel();
+    }
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/components/horizon_music_list.dart';
 import 'package:imusic_mobile/components/song_listview.dart';
@@ -16,9 +17,9 @@ class _GenreTabState extends State<GenreTab> with AutomaticKeepAliveClientMixin<
   bool get wantKeepAlive => true;
 
   MediaLibrary _songsByGenre = new MediaLibrary();
-  List<MyMediaItem>? popGenreItems = [];
-  List<MyMediaItem>? edmGenreItems = [];
-  List<MyMediaItem>? rockGenreItems = [];
+  List<MediaItem>? popGenreItems = [];
+  List<MediaItem>? edmGenreItems = [];
+  List<MediaItem>? rockGenreItems = [];
   var loading = false;
 
   @override
@@ -49,9 +50,9 @@ class _GenreTabState extends State<GenreTab> with AutomaticKeepAliveClientMixin<
       child: SingleChildScrollView(
         child: Column(
           children: [
-            HorizonMusicList(name: "Pop", mediaItems: popGenreItems),
-            HorizonMusicList(name: "EDM", mediaItems: edmGenreItems),
-            HorizonMusicList(name: "Rock", mediaItems: rockGenreItems),
+            // HorizonMusicList(name: "Pop", mediaItems: popGenreItems),
+            // HorizonMusicList(name: "EDM", mediaItems: edmGenreItems),
+            // HorizonMusicList(name: "Rock", mediaItems: rockGenreItems),
           ],
         ),
       ),
