@@ -8,14 +8,12 @@ import 'package:imusic_mobile/AudioPlayerTask.dart';
 import 'MediaState.dart';
 import 'package:imusic_mobile/QueueState.dart';
 
-
 class MusicPlayer extends StatefulWidget {
   @override
   _MusicPlayerState createState() => _MusicPlayerState();
 }
 
 class _MusicPlayerState extends State<MusicPlayer> {
-
   @override
   void initState() {
     // TODO: implement initState
@@ -41,16 +39,29 @@ class _MusicPlayerState extends State<MusicPlayer> {
                   builder: (context, snapshot) {
                     final queueState = snapshot.data;
                     final mediaItem = queueState?.mediaItem;
+                    final abc = (mediaItem != null
+                            ? NetworkImage(mediaItem.artUri.toString())
+                            : AssetImage('assets/images/no_artwork.png'))
+                        as ImageProvider;
                     return Column(
                       children: [
                         Container(
                           width: 300,
                           height: 300,
-                          child: FadeInImage(image: NetworkImage(mediaItem!.artUri.toString()), placeholder: AssetImage('assets/images/no_artwork.png')),
+                          child: FadeInImage(
+                              placeholder:
+                                  AssetImage('assets/images/no_artwork.png'),
+                              image:
+                                  (mediaItem != null
+                                          ? NetworkImage(
+                                              mediaItem.artUri.toString())
+                                          : AssetImage(
+                                              'assets/images/no_artwork.png'))
+                                      as ImageProvider),
                           // (mediaItem?.artUri == null) ? Image(image: AssetImage('assets/images/no_artwork.png')) : Image.network(mediaItem!.artUri.toString()),
                         ),
-                        Text(mediaItem.title),
-                        Text(mediaItem.artist ?? "Unknown"),
+                        Text(mediaItem?.title ?? "Unknown"),
+                        Text(mediaItem?.artist ?? "Unknown"),
                       ],
                     );
                   },
@@ -62,7 +73,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                     final mediaState = snapshot.data;
                     return SeekBar(
                       duration:
-                      mediaState?.mediaItem?.duration ?? Duration.zero,
+                          mediaState?.mediaItem.duration ?? Duration.zero,
                       position: mediaState?.position ?? Duration.zero,
                       onChangeEnd: (newPosition) {
                         AudioService.seekTo(newPosition);
@@ -84,7 +95,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                           icon: Icon(Icons.skip_previous),
                           iconSize: 64.0,
                           onPressed: mediaItem ==
-                              (queue.isNotEmpty ? queue.first : null)
+                                  (queue.isNotEmpty ? queue.first : null)
                               ? null
                               : AudioService.skipToPrevious,
                         );
@@ -101,7 +112,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (playing) pauseButton() else playButton(),
-                            stopButton(),
+                            // stopButton(),
                           ],
                         );
                       },
@@ -116,7 +127,8 @@ class _MusicPlayerState extends State<MusicPlayer> {
                         return IconButton(
                           icon: Icon(Icons.skip_next),
                           iconSize: 64.0,
-                          onPressed: mediaItem == (queue.isNotEmpty ? queue.last : null)
+                          onPressed: mediaItem ==
+                                  (queue.isNotEmpty ? queue.last : null)
                               ? null
                               : AudioService.skipToNext,
                         );
@@ -160,13 +172,14 @@ class _MusicPlayerState extends State<MusicPlayer> {
       ),
     );
   }
+
   /// A stream reporting the combined state of the current media item and its
   /// current position.
   Stream<MediaState> get _mediaStateStream =>
       Rx.combineLatest2<MediaItem?, Duration, MediaState>(
           AudioService.currentMediaItemStream,
           AudioService.positionStream,
-              (mediaItem, position) => MediaState(mediaItem!, position));
+          (mediaItem, position) => MediaState(mediaItem!, position));
 
   /// A stream reporting the combined state of the current queue and the current
   /// media item within that queue.
@@ -174,13 +187,12 @@ class _MusicPlayerState extends State<MusicPlayer> {
       Rx.combineLatest2<List<MediaItem>?, MediaItem?, QueueState>(
           AudioService.queueStream,
           AudioService.currentMediaItemStream,
-              (queue, mediaItem) => QueueState(queue!, mediaItem!));
+          (queue, mediaItem) => QueueState(queue!, mediaItem!));
 
-  start() =>
-      AudioService.start(
-          backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
-          androidResumeOnClick: true,
-          androidEnableQueue: true,
+  start() => AudioService.start(
+        backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+        androidResumeOnClick: true,
+        androidEnableQueue: true,
       );
 
   stop() => AudioService.stop();
@@ -197,20 +209,20 @@ class _MusicPlayerState extends State<MusicPlayer> {
   pause() => AudioService.pause();
 
   IconButton playButton() => IconButton(
-    icon: Icon(Icons.play_arrow),
-    iconSize: 64.0,
-    onPressed: play,
-  );
+        icon: Icon(Icons.play_arrow),
+        iconSize: 64.0,
+        onPressed: play,
+      );
 
   IconButton pauseButton() => IconButton(
-    icon: Icon(Icons.pause),
-    iconSize: 64.0,
-    onPressed: pause,
-  );
+        icon: Icon(Icons.pause),
+        iconSize: 64.0,
+        onPressed: pause,
+      );
 
   IconButton stopButton() => IconButton(
-    icon: Icon(Icons.stop),
-    iconSize: 64.0,
-    onPressed: stop,
-  );
+        icon: Icon(Icons.stop),
+        iconSize: 64.0,
+        onPressed: stop,
+      );
 }

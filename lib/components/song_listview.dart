@@ -1,14 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:imusic_mobile/models/myAudioService.dart';
-import 'package:imusic_mobile/models/myMediaItem.dart';
-import 'package:imusic_mobile/services/auth.dart';
-import 'package:provider/provider.dart';
-
 import '../AudioPlayerTask.dart';
 import '../music_player.dart';
 
-Widget songListView(BuildContext context, MyMediaItem item) {
+Widget songListView(BuildContext context, MediaItem item) {
   return Column(
     children: [
       Container(
@@ -47,10 +42,9 @@ Widget songListView(BuildContext context, MyMediaItem item) {
 
                   await AudioService.addQueueItem(item);
                   await AudioService.skipToQueueItem(item.id);
-                  if (Provider.of<Auth>(context, listen: false).authenticated) {
-                    await MyAudioService.listenToItem(item.serverId);
-                    print('Authenticated user has listened to a song!!');
-                  }
+                  // if (Provider.of<Auth>(context, listen: false).authenticated) {
+                  //   await MyAudioService.listenToItem(item.getServerId());
+                  // }
                   // AudioService.skipToQueueItem(item.id, item.serverId);
                 },
               )

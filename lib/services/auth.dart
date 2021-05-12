@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart' as Dio;
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:imusic_mobile/models/user.dart';
 import 'package:imusic_mobile/services/dio.dart';
 import 'package:imusic_mobile/utils/user_secure_storage.dart';
@@ -14,7 +13,7 @@ class Auth extends ChangeNotifier {
   User? get user => _user;
   String? get token => _token;
 
-  final storage = new FlutterSecureStorage();
+  // final storage = new FlutterSecureStorage();
 
   void login({required Map creds}) async {
     print(creds);
@@ -40,7 +39,6 @@ class Auth extends ChangeNotifier {
         this._user = User.fromJson(response.data);
         this._token = token;
         await UserSecureStorage.storeToken(token);
-        // this.storeToken(token: token);
         notifyListeners();
         print(_user);
       } catch (e) {
@@ -50,9 +48,6 @@ class Auth extends ChangeNotifier {
     }
   }
 
-  // void storeToken({String? token}) async {
-  //   this.storage.write(key: 'token', value: token);
-  // }
 
   void logout() async{
     try {
@@ -60,6 +55,7 @@ class Auth extends ChangeNotifier {
         options: Dio.Options(headers: {'Authorization' : 'Bearer $_token'}));
 
       cleanUp();
+      print(response);
       notifyListeners();
     } catch (e) {
       print(e);
@@ -71,7 +67,6 @@ class Auth extends ChangeNotifier {
     this._user = null;
     this._isLoggedIn = false;
     this._token = null;
-    // await storage.delete(key: 'token');
     await UserSecureStorage.deleteToken();
   }
 }

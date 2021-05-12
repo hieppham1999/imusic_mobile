@@ -4,11 +4,10 @@ import 'package:audio_service/audio_service.dart';
 import 'package:imusic_mobile/utils/user_secure_storage.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:imusic_mobile/Seeker.dart';
-import 'package:imusic_mobile/services/auth.dart';
 import 'package:dio/dio.dart' as Dio;
 import 'package:imusic_mobile/services/dio.dart';
-
-import 'models/myMediaItem.dart';
+import 'models/myAudioService.dart';
+import 'utils/MediaItemExtensions.dart';
 
 
 
@@ -19,6 +18,9 @@ void audioPlayerTaskEntrypoint() {
 
 class AudioPlayerTask extends BackgroundAudioTask{
   //
+  bool _isLoggedIn = false;
+
+  String? _token;
 
   Timer? timer;
 
@@ -36,6 +38,15 @@ class AudioPlayerTask extends BackgroundAudioTask{
   List<MediaItem> singleMediaQueue = [];
   int? get index => _player.currentIndex;
   MediaItem? get mediaItem => index == null ? null : queue[index!];
+
+  void checkAuthenticatedStatus() async{
+    _token = await UserSecureStorage.getToken();
+    if (_token != null) {
+      _isLoggedIn = true;
+    } else {
+      _isLoggedIn = false;
+    }
+  }
 
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
@@ -67,6 +78,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
       }
     });
   }
+
 
 
   @override
@@ -104,16 +116,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
       if (playingTime <= 15) {
         playingTime++;
       } else {
-        // try {
-        //   String? token = await UserSecureStorage.getToken();
-        //   Dio.Response response = await dio().put('/me/listen/',
-        //       data: {'serverId' : mediaItem!.serverId},
-        //       options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
-        //   print(response);
-        //
-        // } catch (e, stacktrace) {
-        //   print('caught $e : $stacktrace');
-        // }
+        await MyAudioService.listenFor15Sec(mediaItem!.getServerId());
         timer.cancel();
       }
     });
@@ -134,15 +137,13 @@ class AudioPlayerTask extends BackgroundAudioTask{
   @override
   Future<void> onPlay()  async {
     _player.play();
-    // if (timer != null) {
-    //   timer.cancelTimer();
-    // }
-    // timer = MyTimer();
-    // timer.startTimer(15, (){
-    //   print('timer has reached the submitted value');
-    //   timer.cancelTimer();
-    // });
-    if (Auth().authenticated){
+    checkAuthenticatedStatus();
+
+    // send listen count to server
+    await MyAudioService.listenToItem(mediaItem!.getServerId());
+
+    // if User has logged in, count listen time and send to server
+    if (_isLoggedIn) {
       _startTimer();
     }
   }

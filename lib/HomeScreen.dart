@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:imusic_mobile/pages/genre_tab.dart';
 import 'package:imusic_mobile/pages/home_tab.dart';
 import 'package:imusic_mobile/pages/new_songs_tab.dart';
@@ -18,12 +17,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
 
-  // final storage = new FlutterSecureStorage();
   final List<Tab> myTabs = <Tab>[
     Tab(text: 'Trang Chủ'),
     Tab(text: 'Thể loại'),
     Tab(text: 'Bài hát mới'),
   ];
+
+  TextEditingController _searchQueryController = TextEditingController();
+  bool _isSearching = false;
+  String searchQuery = "Search query";
 
   late TabController _tabController;
 
@@ -35,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void readToken() async {
-    // String? token = await storage.read(key: 'token');
+
     String? token = await UserSecureStorage.getToken();
     Provider.of<Auth>(context, listen: false).tryToken(token : token);
     print(token);
@@ -51,19 +53,12 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
         backgroundColor: Theme.of(context).primaryColor,
-        // leading: IconButton(
-        //   icon: Icon(Icons.menu),
-        //   onPressed: ,
-        // ),
-        title: Text("iMusic"),
+        leading: _isSearching ? const BackButton() : null,
+        title: _isSearching ? _buildSearchField() : Text('iMusic'),
         centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
-          ),
-        ],
+        actions: _buildActions(),
         bottom: TabBar(
           tabs: myTabs,
           controller: _tabController,
@@ -85,5 +80,74 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  onPressed() {}
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchQueryController,
+      autofocus: true,
+      decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
+        hintText: "Search for song...",
+        border: InputBorder.none,
+        hintStyle: TextStyle(color: Colors.black38),
+      ),
+      style: TextStyle(color: Colors.black, fontSize: 16.0),
+      onChanged: (query) => updateSearchQuery(query),
+    );
+  }
+
+  List<Widget> _buildActions() {
+    if (_isSearching) {
+      return <Widget>[
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            if (_searchQueryController == null ||
+                _searchQueryController.text.isEmpty) {
+              Navigator.pop(context);
+              return;
+            }
+            _clearSearchQuery();
+          },
+        ),
+      ];
+    }
+
+    return <Widget>[
+      IconButton(
+        icon: const Icon(Icons.search),
+        onPressed: _startSearch,
+      ),
+    ];
+  }
+
+  void _startSearch() {
+    ModalRoute.of(context)!
+        .addLocalHistoryEntry(LocalHistoryEntry(onRemove: _stopSearching));
+
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void updateSearchQuery(String newQuery) {
+    setState(() {
+      searchQuery = newQuery;
+    });
+  }
+
+  void _stopSearching() {
+    _clearSearchQuery();
+
+    setState(() {
+      _isSearching = false;
+    });
+  }
+
+  void _clearSearchQuery() {
+    setState(() {
+      _searchQueryController.clear();
+      updateSearchQuery("");
+    });
+  }
 }

@@ -1,7 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/components/song_listview.dart';
-import 'package:imusic_mobile/models/myMediaItem.dart';
 
 class HorizonMusicList extends StatelessWidget {
   const HorizonMusicList({
@@ -11,7 +10,7 @@ class HorizonMusicList extends StatelessWidget {
   }) : super(key: key);
 
   final String name;
-  final List<MyMediaItem>? mediaItems;
+  final List<MediaItem>? mediaItems;
 
   @override
   Widget build(BuildContext context) {

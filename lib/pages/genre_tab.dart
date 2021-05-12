@@ -1,8 +1,5 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:imusic_mobile/components/horizon_music_list.dart';
-import 'package:imusic_mobile/components/song_listview.dart';
-import 'package:imusic_mobile/models/myMediaItem.dart';
 
 import '../MediaLibrary.dart';
 

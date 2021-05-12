@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/MediaLibrary.dart';
 import 'package:imusic_mobile/components/horizon_music_list.dart';
-import 'package:imusic_mobile/models/myMediaItem.dart';
 import 'package:imusic_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:audio_service/audio_service.dart';
@@ -18,9 +17,9 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
   bool get wantKeepAlive => true;
 
   MediaLibrary _mediaLibrary = new MediaLibrary();
-  List<MyMediaItem>? latestSongs = [];
-  List<MyMediaItem>? hotSongs = [];
-  List<MyMediaItem>? recommendSongs = [];
+  List<MediaItem>? latestSongs = [];
+  List<MediaItem>? hotSongs = [];
+  List<MediaItem>? recommendSongs = [];
   var loading = false;
 
   @override
@@ -30,7 +29,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
     fetchSongs();
   }
 
-  void fetchSongs() async {
+  Future<void> fetchSongs() async {
     setState(() {
       loading = true;
     });
@@ -51,25 +50,33 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Consumer<Auth>(builder: (context, auth, child) {
-              if (auth.authenticated) {
-                return HorizonMusicList(name: "Recommend Music", mediaItems: recommendSongs);
-              } else {
-                return SizedBox();
+    return RefreshIndicator(
+      onRefresh: _pullRefresh,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Consumer<Auth>(builder: (context, auth, child) {
+                if (auth.authenticated) {
+                  // fetchSongs();
+                  return HorizonMusicList(name: "Recommend Music", mediaItems: recommendSongs);
+                } else {
+                  return SizedBox();
+                }
               }
-            }
-            ),
-            HorizonMusicList(name: "Recently Upload", mediaItems: latestSongs),
-            HorizonMusicList(name: "Hot Music", mediaItems: hotSongs),
-          ],
+              ),
+              HorizonMusicList(name: "Recently Upload", mediaItems: latestSongs),
+              HorizonMusicList(name: "Hot Music", mediaItems: hotSongs),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _pullRefresh() async {
+    await fetchSongs();
   }
 }
 
