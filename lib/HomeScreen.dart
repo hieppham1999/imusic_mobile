@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:imusic_mobile/pages/genre_tab.dart';
 import 'package:imusic_mobile/pages/home_tab.dart';
 import 'package:imusic_mobile/pages/new_songs_tab.dart';
+import 'package:imusic_mobile/pages/search_page.dart';
 import 'package:imusic_mobile/utils/user_secure_storage.dart';
 import 'SideDrawer.dart';
 import 'components/now_playing_bar.dart';
@@ -22,10 +23,6 @@ class _HomeScreenState extends State<HomeScreen>
     Tab(text: 'Thể loại'),
     Tab(text: 'Bài hát mới'),
   ];
-
-  TextEditingController _searchQueryController = TextEditingController();
-  bool _isSearching = false;
-  String searchQuery = "Search query";
 
   late TabController _tabController;
 
@@ -55,10 +52,18 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: AppBar(
         titleSpacing: 0,
         backgroundColor: Theme.of(context).primaryColor,
-        leading: _isSearching ? const BackButton() : null,
-        title: _isSearching ? _buildSearchField() : Text('iMusic'),
+        // leading: _isSearching ? const BackButton() : null,
+        title: Text('iMusic'),
         centerTitle: true,
-        actions: _buildActions(),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SearchPage()));
+                }
+          )
+        ],
         bottom: TabBar(
           tabs: myTabs,
           controller: _tabController,
@@ -78,76 +83,5 @@ class _HomeScreenState extends State<HomeScreen>
       ),
           ),
     );
-  }
-
-  Widget _buildSearchField() {
-    return TextField(
-      controller: _searchQueryController,
-      autofocus: true,
-      decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        hintText: "Search for song...",
-        border: InputBorder.none,
-        hintStyle: TextStyle(color: Colors.black38),
-      ),
-      style: TextStyle(color: Colors.black, fontSize: 16.0),
-      onChanged: (query) => updateSearchQuery(query),
-    );
-  }
-
-  List<Widget> _buildActions() {
-    if (_isSearching) {
-      return <Widget>[
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            if (_searchQueryController == null ||
-                _searchQueryController.text.isEmpty) {
-              Navigator.pop(context);
-              return;
-            }
-            _clearSearchQuery();
-          },
-        ),
-      ];
-    }
-
-    return <Widget>[
-      IconButton(
-        icon: const Icon(Icons.search),
-        onPressed: _startSearch,
-      ),
-    ];
-  }
-
-  void _startSearch() {
-    ModalRoute.of(context)!
-        .addLocalHistoryEntry(LocalHistoryEntry(onRemove: _stopSearching));
-
-    setState(() {
-      _isSearching = true;
-    });
-  }
-
-  void updateSearchQuery(String newQuery) {
-    setState(() {
-      searchQuery = newQuery;
-    });
-  }
-
-  void _stopSearching() {
-    _clearSearchQuery();
-
-    setState(() {
-      _isSearching = false;
-    });
-  }
-
-  void _clearSearchQuery() {
-    setState(() {
-      _searchQueryController.clear();
-      updateSearchQuery("");
-    });
   }
 }

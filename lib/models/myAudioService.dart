@@ -1,6 +1,8 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart' as Dio;
 import 'package:imusic_mobile/services/dio.dart';
 import 'package:imusic_mobile/utils/user_secure_storage.dart';
+import 'package:imusic_mobile/utils/MediaItemExtensions.dart';
 
 class MyAudioService {
 
@@ -34,5 +36,18 @@ class MyAudioService {
     } catch (e, stacktrace) {
       print('caught $e : $stacktrace');
     }
+  }
+
+  static Future<List<MediaItem>> searchByKeyword(String keyword) async {
+    try {
+      Dio.Response response = await dio().get('/songs/search',
+          queryParameters: {'keyword' : keyword});
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
   }
 }

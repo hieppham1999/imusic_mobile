@@ -1,6 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:imusic_mobile/components/song_listview.dart';
+import 'package:imusic_mobile/components/song_card.dart';
 
 class HorizonMusicList extends StatelessWidget {
   const HorizonMusicList({
@@ -32,7 +32,7 @@ class HorizonMusicList extends StatelessWidget {
             shrinkWrap: true,
               itemCount: mediaItems!.length,
               scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => songListView(
+              itemBuilder: (context, index) => songCard(
                 context,
                 mediaItems![index],
               )),

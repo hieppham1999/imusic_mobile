@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../AudioPlayerTask.dart';
 import '../music_player.dart';
 
-Widget songListView(BuildContext context, MediaItem item) {
+Widget songCard(BuildContext context, MediaItem item) {
   return Column(
     children: [
       Container(
@@ -31,21 +31,20 @@ Widget songListView(BuildContext context, MediaItem item) {
                   overflow: TextOverflow.ellipsis,
                 ),
                 onTap: () async {
-                  await AudioService.start(
-                    backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
-                    androidResumeOnClick: true,
-                    androidEnableQueue: true,
-                  );
+                  if (!AudioService.running) {
+                    await AudioService.start(
+                      backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+                      androidResumeOnClick: true,
+                      androidEnableQueue: true,
+                    );
+                  }
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => MusicPlayer(),
                   ));
 
                   await AudioService.addQueueItem(item);
                   await AudioService.skipToQueueItem(item.id);
-                  // if (Provider.of<Auth>(context, listen: false).authenticated) {
-                  //   await MyAudioService.listenToItem(item.getServerId());
-                  // }
-                  // AudioService.skipToQueueItem(item.id, item.serverId);
+
                 },
               )
             ],
