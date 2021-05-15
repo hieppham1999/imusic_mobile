@@ -27,7 +27,7 @@ class HorizonMusicList extends StatelessWidget {
           ),
         ),
         Container(
-          height: 250,
+          height: 230,
           child: ListView.builder(
             shrinkWrap: true,
               itemCount: mediaItems!.length,

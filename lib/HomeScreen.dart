@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
       drawer: SideDrawer(),
-      bottomNavigationBar: nowPlayingBar(context),
+      bottomNavigationBar: NowPlayingBar(),
       body:
           SafeArea(
             child: TabBarView(

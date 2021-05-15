@@ -4,8 +4,9 @@ class PopupMenuContainer<T> extends StatefulWidget {
   final Widget child;
   final List<PopupMenuEntry<T>> items;
   final void Function(T) onItemSelected;
+  final void Function() onTap;
 
-  PopupMenuContainer({required this.child, required this.items, required this.onItemSelected, Key? key}) : super(key: key);
+  PopupMenuContainer({required this.child, required this.items, required this.onItemSelected, required this.onTap, Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => PopupMenuContainerState<T>();
@@ -39,6 +40,7 @@ class PopupMenuContainerState<T> extends State<PopupMenuContainer<T>>{
 
           widget.onItemSelected(value);
         },
+        onTap: widget.onTap,
         child: widget.child
     );
   }

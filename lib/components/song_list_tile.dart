@@ -16,6 +16,7 @@ Widget SongListTile({
       PopupMenuItem(child: Text('Add to Now Playing'), value: 'addSongToQueue',),
       PopupMenuItem(child: Text('Save To Playlist'), value: 'addSongToPlaylist',),
     ],
+    onTap: onTap,
     onItemSelected: (value) async {
       switch (value) {
         case 'addSongToQueue': {
