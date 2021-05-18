@@ -4,8 +4,6 @@ import 'package:audio_service/audio_service.dart';
 import 'package:imusic_mobile/utils/user_secure_storage.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:imusic_mobile/Seeker.dart';
-import 'package:dio/dio.dart' as Dio;
-import 'package:imusic_mobile/services/dio.dart';
 import 'models/myAudioService.dart';
 import 'utils/MediaItemExtensions.dart';
 
@@ -19,6 +17,8 @@ void audioPlayerTaskEntrypoint() {
 class AudioPlayerTask extends BackgroundAudioTask{
   //
   bool _isLoggedIn = false;
+
+  bool _isRequestSent = false;
 
   String? _token;
 
@@ -103,6 +103,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
     AudioServiceBackground.sendCustomEvent('skip to $newIndex');
 
     playingTime = 0;
+    _isRequestSent = false;
 
     onPlay();
   }
@@ -140,7 +141,10 @@ class AudioPlayerTask extends BackgroundAudioTask{
     checkAuthenticatedStatus();
 
     // send listen count to server
-    await MyAudioService.listenToItem(mediaItem!.getServerId());
+    if (_isRequestSent == false) {
+      await MyAudioService.listenToItem(mediaItem!.getServerId());
+      _isRequestSent = true;
+    }
 
     // if User has logged in, count listen time and send to server
     if (_isLoggedIn) {

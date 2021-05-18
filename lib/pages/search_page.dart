@@ -1,6 +1,5 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:imusic_mobile/components/popup_menu_container.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 import 'package:imusic_mobile/components/song_list_tile.dart';
 
@@ -123,13 +122,13 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  void _stopSearching() {
-    _clearSearchQuery();
-    //
-    // setState(() {
-    //   _isSearching = false;
-    // });
-  }
+  // void _stopSearching() {
+  //   _clearSearchQuery();
+  //   //
+  //   // setState(() {
+  //   //   _isSearching = false;
+  //   // });
+  // }
 
   void _clearSearchQuery() {
     setState(() {
@@ -138,12 +137,4 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  // void _startSearch() {
-  //   ModalRoute.of(context)!
-  //       .addLocalHistoryEntry(LocalHistoryEntry(onRemove: _stopSearching));
-  //
-  //   setState(() {
-  //     _isSearching = true;
-  //   });
-  // }
 }
