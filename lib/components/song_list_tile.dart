@@ -13,13 +13,13 @@ Widget SongListTile({
   }
   return PopupMenuContainer(
     items: [
-      PopupMenuItem(child: Text('Add to Now Playing'), value: 'addSongToQueue',),
-      PopupMenuItem(child: Text('Save To Playlist'), value: 'addSongToPlaylist',),
+      PopupMenuItem(child: Text('Add to Now Playing'), value: 'addToQueue',),
+      PopupMenuItem(child: Text('Save To Playlist'), value: 'addToPlaylist',),
     ],
     onTap: onTap,
     onItemSelected: (value) async {
       switch (value) {
-        case 'addSongToQueue': {
+        case 'addToQueue': {
           if (!AudioService.running) {
             await AudioService.start(
               backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
@@ -28,11 +28,11 @@ Widget SongListTile({
             );
           }
           AudioService.addQueueItem(mediaItem);
-          print('addSongToQueue');
+          print('addToQueue');
         }
         break;
-        case 'addSongToPlaylist': {
-          print('addSongToPlaylist');
+        case 'addToPlaylist': {
+          print('addToPlaylist');
         }
         break;
         default: {

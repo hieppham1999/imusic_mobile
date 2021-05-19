@@ -35,7 +35,6 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   // List<MediaItem> get queue => _mediaLibrary.items;
   List<MediaItem> queue = [];
-  List<MediaItem> singleMediaQueue = [];
   int? get index => _player.currentIndex;
   MediaItem? get mediaItem => index == null ? null : queue[index!];
 
@@ -77,6 +76,22 @@ class AudioPlayerTask extends BackgroundAudioTask{
           break;
       }
     });
+  }
+
+  @override
+  Future<void> onRemoveQueueItem(MediaItem mediaItem) async {
+    queue.remove(mediaItem);
+    await AudioServiceBackground.setQueue(queue);
+    try {
+      await _player.setAudioSource(ConcatenatingAudioSource(
+        children:
+        queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+      ));
+    } catch (e) {
+      print("Error: $e");
+      onStop();
+    }
+    return super.onRemoveQueueItem(mediaItem);
   }
 
 
@@ -140,15 +155,15 @@ class AudioPlayerTask extends BackgroundAudioTask{
     _player.play();
     checkAuthenticatedStatus();
 
+    // if User has logged in, count listen time and send to server
+    if (_isLoggedIn) {
+      _startTimer();
+    }
+
     // send listen count to server
     if (_isRequestSent == false) {
       await MyAudioService.listenToItem(mediaItem!.getServerId());
       _isRequestSent = true;
-    }
-
-    // if User has logged in, count listen time and send to server
-    if (_isLoggedIn) {
-      _startTimer();
     }
   }
 
