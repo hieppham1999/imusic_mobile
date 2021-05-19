@@ -24,69 +24,80 @@ class _NowPlayingBarState extends State<NowPlayingBar> {
         return Visibility(
           visible:
           processingState != AudioProcessingState.none ? true : false,
-          child: TextButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => MusicPlayer(),
-              ));
-            },
-            style: ButtonStyle(
-                enableFeedback: false,
-                overlayColor: MaterialStateProperty.all<Color>(
-                    Colors.black.withOpacity(0.0)),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Colors.black.withOpacity(0.7))),
-            child: StreamBuilder<QueueState>(
-              stream: _queueStateStream,
-              builder: (context, snapshot) {
-                final queueState = snapshot.data;
-                final mediaItem = queueState?.mediaItem;
-                final artCover = (mediaItem != null
-                    ? NetworkImage(mediaItem.artUri.toString())
-                    : AssetImage('assets/images/no_artwork.png'))
-                as ImageProvider;
-                return Row(
-                  children: [
-                    Container(
-                      height: 70,
-                      width: 70,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        image: DecorationImage(
-                            image: artCover),
+          child: Container(
+            height: MediaQuery.of(context).size.height*0.12,
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => MusicPlayer(),
+                ));
+              },
+              style: ButtonStyle(
+                  enableFeedback: false,
+                  overlayColor: MaterialStateProperty.all<Color>(
+                      Colors.black.withOpacity(0.0)),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.black.withOpacity(0.7))),
+              child: StreamBuilder<QueueState>(
+                stream: _queueStateStream,
+                builder: (context, snapshot) {
+                  final queueState = snapshot.data;
+                  final mediaItem = queueState?.mediaItem;
+                  final artCover = (mediaItem != null
+                      ? NetworkImage(mediaItem.artUri.toString())
+                      : AssetImage('assets/images/no_artwork.png'))
+                  as ImageProvider;
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        height: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          image: DecorationImage(
+                              image: artCover),
+                        ),
+                        child: AspectRatio(
+                          aspectRatio: 1 / 1,
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 8),
-                      height: 70,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            mediaItem?.title ?? "Unknown",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                mediaItem?.title ?? "Unknown",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              Text(
+                                mediaItem?.artist ?? "Unknown",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            height: 8.0,
-                          ),
-                          Text(
-                            mediaItem?.artist ?? "Unknown",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                );
-              }
+                        ),
+                      )
+                    ],
+                  );
+                }
+              ),
             ),
           ),
         );

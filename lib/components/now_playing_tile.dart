@@ -39,12 +39,12 @@ class NowPlayingTile extends StatelessWidget {
                   }
                 },
                 child: Container(
-                  width: MediaQuery. of(context). size. width*0.85,
+                  width: MediaQuery.of(context).size.width*0.85,
+                  height: MediaQuery.of(context).size.height*0.1,
                   child: Row(
                     children: [
                       Container(
-                        height: 80.0,
-                        width: 80.0,
+                        height: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16.0),
                           image: DecorationImage(
@@ -53,47 +53,56 @@ class NowPlayingTile extends StatelessWidget {
                                       : AssetImage('assets/images/no_artwork.png'))
                                   as ImageProvider),
                         ),
+                        child: AspectRatio(
+                          aspectRatio: 1 / 1,
+                        ),
                       ),
                       SizedBox(
                         width: 10.0,
                       ),
-                      Container(
-                        width: 190,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              mediaItem.title,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w600,
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                mediaItem.title,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Text(
-                              mediaItem.artist!,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
+                              SizedBox(
+                                height: 10.0,
                               ),
-                            )
-                          ],
+                              Text(
+                                mediaItem.artist!,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                      Spacer(),
+                      // Spacer(),
                       PopupMenuButton(
                         onSelected: onSelected,
                         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
+                          PopupMenuItem<String>(
                             value: 'removeFromQueue',
                             child: Text('Remove From Queue'),
+                            enabled: (!isCurrentPlaying) ? true : false,
                           ),
-                          const PopupMenuItem<String>(
+                          PopupMenuItem<String>(
                             value: 'addToPlaylist',
                             child: Text('Add to Playlist'),
                           ),

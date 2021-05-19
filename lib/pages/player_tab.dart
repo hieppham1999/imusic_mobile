@@ -34,32 +34,41 @@ class _PlayerTabState extends State<PlayerTab> {
                 builder: (context, snapshot) {
                   final queueState = snapshot.data;
                   final mediaItem = queueState?.mediaItem;
-                  return Column(
-                    children: [
-                      Container(
-                        width: 300,
-                        height: 300,
-                        child: FadeInImage(
-                            placeholder:
-                                AssetImage('assets/images/no_artwork.png'),
-                            image: (mediaItem != null
-                                    ? NetworkImage(mediaItem.artUri.toString())
-                                    : AssetImage(
-                                        'assets/images/no_artwork.png'))
-                                as ImageProvider),
-                        // (mediaItem?.artUri == null) ? Image(image: AssetImage('assets/images/no_artwork.png')) : Image.network(mediaItem!.artUri.toString()),
-                      ),
-                      SizedBox(height: 15.0),
-                      Text(
-                        mediaItem?.title ?? "Unknown",
-                        style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.w500),
-                      ),
-                      Text(mediaItem?.artist ?? "Unknown",
-                        style: TextStyle(
-                            fontSize: 16.0, fontWeight: FontWeight.w400),
-                      ),
-                    ],
+                  return Container(
+                    width: MediaQuery. of(context). size. width*0.7,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          child: AspectRatio(
+                            aspectRatio: 1 / 1,
+                            child: FadeInImage(
+                                placeholder:
+                                    AssetImage('assets/images/no_artwork.png'),
+                                image: (mediaItem != null
+                                        ? NetworkImage(mediaItem.artUri.toString())
+                                        : AssetImage(
+                                            'assets/images/no_artwork.png'))
+                                    as ImageProvider),
+                          ),
+                          // (mediaItem?.artUri == null) ? Image(image: AssetImage('assets/images/no_artwork.png')) : Image.network(mediaItem!.artUri.toString()),
+                        ),
+                        SizedBox(height: 15.0),
+                        Text(
+                          mediaItem?.title ?? "Unknown",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.w500),
+                        ),
+                        Text(mediaItem?.artist ?? "Unknown",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),

@@ -260,6 +260,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
   @override
   Future<void> onAddQueueItem(MediaItem mediaItem) async {
       queue.add(mediaItem);
+      queue = queue.toSet().toList();
       await AudioServiceBackground.setQueue(queue);
     try {
       await _player.setAudioSource(ConcatenatingAudioSource(
