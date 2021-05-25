@@ -20,6 +20,7 @@ class PopupMenuContainerState<T> extends State<PopupMenuContainer<T>>{
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(8),
         onTapDown: (TapDownDetails details){
           _tapDownPosition = details.globalPosition;
         },

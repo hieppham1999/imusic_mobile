@@ -77,22 +77,6 @@ Widget songCard(BuildContext context, MediaItem item) {
                     item.artist!,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  // onTap: () async {
-                  //   if (!AudioService.running) {
-                  //     await AudioService.start(
-                  //       backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
-                  //       androidResumeOnClick: true,
-                  //       androidEnableQueue: true,
-                  //     );
-                  //   }
-                  //   Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => MusicPlayer(),
-                  //   ));
-                  //
-                  //   await AudioService.addQueueItem(item);
-                  //   await AudioService.skipToQueueItem(item.id);
-                  //
-                  // },
                 )
               ],
             ),

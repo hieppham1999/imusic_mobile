@@ -25,8 +25,10 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     fetchSongs();
+    super.initState();
+
+
   }
 
   Future<void> fetchSongs() async {
@@ -50,6 +52,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
+    if (loading) return Center(child: CircularProgressIndicator(),);
     return RefreshIndicator(
       onRefresh: _pullRefresh,
       child: Padding(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:imusic_mobile/pages/playlist_page.dart';
 import 'package:imusic_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,14 @@ class SideDrawer extends StatelessWidget {
                   children: [
                     ListTile(
                       title: Text('Tài Khoản'),
+                    ),
+                    ListTile(
+                      title: Text('Playlists'),
+                      leading: Icon(Icons.playlist_play),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => PlaylistPage()));
+                      },
                     ),
                     ListTile(
                       title: Text('Logout'),

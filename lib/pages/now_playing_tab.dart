@@ -36,7 +36,9 @@ class _NowPlayingTabState extends State<NowPlayingTab> {
                     itemBuilder: (context, index) => NowPlayingTile(
                         mediaItem: queueState.queue[index],
                         isCurrentPlaying: (queueState.queue[index].id != mediaItem!.id) ? false : true,
-                        onTap: () {}));
+                        onTap: () {
+                          //TODO
+                        }));
               },
             ),
           );

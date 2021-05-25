@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart' as Dio;
+import 'package:imusic_mobile/models/playlist.dart';
 import 'package:imusic_mobile/services/dio.dart';
 import 'package:imusic_mobile/utils/user_secure_storage.dart';
 import 'package:imusic_mobile/utils/MediaItemExtensions.dart';
@@ -42,6 +43,34 @@ class MyAudioService {
     try {
       Dio.Response response = await dio().get('/songs/search',
           queryParameters: {'keyword' : keyword});
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
+  }
+
+  static Future<List<Playlist>> getPlaylist() async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().get('/playlists',
+      options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
+      return (response.data as List)
+          .map((x) => Playlist.fromJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
+  }
+
+  static Future<List<MediaItem>> getSongsFromPlaylist(int playlistId) async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().get('/playlists/' + playlistId.toString(),
+          options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
       return (response.data as List)
           .map((x) => mediaItemFromApiJson(x))
           .toList();

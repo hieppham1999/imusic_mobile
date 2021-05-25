@@ -15,7 +15,7 @@ class Auth extends ChangeNotifier {
 
   // final storage = new FlutterSecureStorage();
 
-  void login({required Map creds}) async {
+  Future<int?> login({required Map creds}) async {
     print(creds);
     try {
       Dio.Response response = await dio().post('/auth/login', data: creds);
@@ -23,9 +23,11 @@ class Auth extends ChangeNotifier {
 
       String token = response.data.toString();
       this.tryToken(token: token);
+      return response.statusCode;
     } catch (e) {
       print(e);
     }
+
   }
 
   void tryToken({String? token}) async {
