@@ -15,6 +15,32 @@ class Auth extends ChangeNotifier {
 
   // final storage = new FlutterSecureStorage();
 
+  Future<int?> register({required Map creds}) async {
+    print(creds);
+    try {
+      Dio.Response response = await dio().post('/auth/register', data: creds,
+      options: Dio.Options(
+        headers: {"Accept" : "application/json"},
+        validateStatus: (status) { return status! < 500; },
+      ));
+      return response.statusCode;
+    } catch (e) {
+      print(e);
+      // print(response.data.toString());
+      // print(response.statusMessage);
+      // print(response.statusCode);
+      // // print(response.data['token'].toString());
+      // if (response.statusCode != 200){
+      //   print('-----');
+      //   print(response.statusMessage);
+      //   print('====');
+      //   // throw Exception(response.statusMessage);
+      // }
+
+
+    }
+  }
+
   Future<int?> login({required Map creds}) async {
     print(creds);
     try {

@@ -79,4 +79,15 @@ class MyAudioService {
     }
     return [];
   }
+
+  static Future<void> addSongToPlaylist(int playlistId, int serverId) async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().post('/playlists/' + playlistId.toString() + '/add',
+          data: {'serverId' : serverId},
+          options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/components/popup_menu_container.dart';
+import 'package:imusic_mobile/pages/add_song_to_playlist_dialog.dart';
 import '../AudioPlayerTask.dart';
 import '../music_player.dart';
 
@@ -41,7 +42,9 @@ Widget songCard(BuildContext context, MediaItem item) {
         }
         break;
         case 'addSongToPlaylist': {
-          print('addSongToPlaylist');
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => AddSongToPlaylistDialog(
+            mediaItem: item,)));
         }
         break;
         default: {

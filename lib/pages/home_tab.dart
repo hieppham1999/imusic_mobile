@@ -36,7 +36,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
       loading = true;
     });
     var updatedList = (await (_mediaLibrary.fetchItem('/songs/recently?lim=10')));
-    var updatedHotList = (await (_mediaLibrary.fetchItem('/songs/hot?t=w')));
+    var updatedHotList = (await (_mediaLibrary.fetchItem('/songs/hot?t=m')));
     var updatedRecommendList = Provider.of<Auth>(context, listen: false).authenticated
         ? await (_mediaLibrary.fetchUserSongData('/me/recommend'))
         : null;
@@ -59,6 +59,7 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Consumer<Auth>(builder: (context, auth, child) {
                 if (auth.authenticated) {
