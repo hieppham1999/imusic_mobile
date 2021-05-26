@@ -7,5 +7,8 @@ Dio dio() {
 
   dio.options.headers['accept'] = 'Application/Json';
 
+  dio.options.connectTimeout = 5000; //5s
+  dio.options.receiveTimeout = 3000;
+
   return dio;
 }

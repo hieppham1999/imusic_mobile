@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -68,87 +68,62 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
                 colors: [
                   Colors.white,
-                  Colors.blue,
+                  Colors.lightBlue,
                 ]
               )
             ),
             padding: const EdgeInsets.all(20.0),
             child: Form(
               key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                      "Sign in",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w500
-                      ),
-                  ),
-                  SizedBox(height: 20,),
-                  TextFormField(
-                    maxLines: 1,
-                    decoration: InputDecoration(
-                      // prefixIcon: Icon(Icons.email_rounded),
-                      labelText: 'Email',
-                      focusColor: Colors.black,
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.black54,
-                          width: 1.5
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                        "Sign in",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.black54,
-                            width: 1.5
-                        ),
-                      ),
-
                     ),
-                    controller: _emailController,
-                    validator: (value) => value!.isEmpty ? 'Please enter valid email' : null
-                  ),
-                  SizedBox(height: 20,),
-                  TextFormField(
+                    SizedBox(height: 20,),
+                    TextFormField(
                       maxLines: 1,
+                        keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        // prefixIcon: Icon(Icons.email_rounded),
-                        labelText: 'Password',
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.black54,
-                              width: 1.5
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Colors.black54,
-                              width: 1.5
-                          ),
-                        ),
+                        icon: Icon(Icons.email_rounded)
 
                       ),
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      obscureText: true,
-                      controller: _passwordController,
-                      validator: (value) => value!.isEmpty ? 'Please enter password' : null
-                  ),
-                  SizedBox(height: 50,),
-                  SizedBox(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height*0.08,
-                    child: TextButton(
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                  side: BorderSide(color: Colors.transparent)
-                              )
-                          ),
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      controller: _emailController,
+                      validator: (value) => value!.isEmpty ? 'Email can\'t be empty' : null,
+                    ),
+                    SizedBox(height: 20,),
+                    TextFormField(
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.lock_outline_rounded)
+                        ),
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        obscureText: true,
+                        controller: _passwordController,
+                        validator: (value) => value!.isEmpty ? 'Password can\'t be empty' : null
+                    ),
+                    SizedBox(height: 50,),
+                    SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height*0.08,
+                      child: TextButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side: BorderSide(color: Colors.transparent)
+                                )
+                            ),
+                            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
 
                         ),
                         child: Text(
@@ -169,36 +144,39 @@ class _LoginScreenState extends State<LoginScreen> {
                             int statusCode = (await Provider.of<Auth>(context, listen: false).
                               login(creds: creds))!;
                             if (statusCode == 200) {
-                              Navigator.pop(context);
+                              Navigator.of(context)
+                                  .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
                             }
 
-                          }
-                        },),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have a account? "),
-                      TextButton(
-                          onPressed: (){
-                            Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) => RegisterScreen()));
-                          },
-                          child: Text(
-                            'Sign up',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500
+                            }
+                          },),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have a account? "),
+                        TextButton(
+                            onPressed: (){
+                              Navigator.of(context).pushReplacementNamed('/register');
+                              // Navigator.of(context).push(
+                              //     MaterialPageRoute(builder: (context) => RegisterScreen()));
+                            },
+                            child: Text(
+                              'Sign up',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500
+                              ),
                             ),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                              alignment: Alignment.centerLeft
                           ),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                            alignment: Alignment.centerLeft
-                        ),
-                        ),
-                    ],
-                  )
-                ],
+                          ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

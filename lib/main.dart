@@ -1,5 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:imusic_mobile/Auth/login_screen.dart';
+import 'package:imusic_mobile/Auth/register_screen.dart';
 import 'package:imusic_mobile/HomeScreen.dart';
 import 'package:imusic_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +25,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'iMusic',
       theme: ThemeData(primarySwatch: Colors.lightBlue),
-      home: AudioServiceWidget(child: HomeScreen()),
+      // home: AudioServiceWidget(child: HomeScreen()),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => AudioServiceWidget(child: HomeScreen()),
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen(),
+      },
     );
   }
 }

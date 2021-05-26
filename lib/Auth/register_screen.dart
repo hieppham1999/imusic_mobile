@@ -144,11 +144,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have a account? "),
+                  Text("Have an account? "),
                   TextButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.of(context).pushReplacementNamed('/login');
+                    },
                     child: Text(
-                      'Sign up',
+                      'Sign in',
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500

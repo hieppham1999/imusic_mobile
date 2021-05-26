@@ -6,6 +6,10 @@ import 'package:provider/provider.dart';
 import 'Auth/login_screen.dart';
 
 class SideDrawer extends StatelessWidget {
+
+  SideDrawer({Key? key}) : super(key: key);
+
+
   @override
   Widget build(BuildContext context) {
     return Drawer(child: Consumer<Auth>(builder: (context, auth, child) {
@@ -38,14 +42,23 @@ class SideDrawer extends StatelessWidget {
               : Column(
                   children: [
                     ListTile(
-                      title: Text('Tài Khoản'),
+                      title: Text('Account'),
                     ),
                     ListTile(
-                      title: Text('Đăng nhập'),
-                      leading: Icon(Icons.login),
+                      title: Text('Login'),
+                      leading: Icon(Icons.login_rounded),
+                      onTap: () async{
+                        await Navigator.push(
+                          context,
+                            MaterialPageRoute(builder: (context) => LoginScreen())
+                        );
+                      },
+                    ),
+                    ListTile(
+                      title: Text('Register'),
+                      leading: Icon(Icons.login_rounded),
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => LoginScreen()));
+                        Navigator.of(context).pushNamed('/register');
                       },
                     ),
                   ],
