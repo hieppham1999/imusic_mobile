@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
-import 'package:imusic_mobile/components/song_list_tile.dart';
+import 'package:imusic_mobile/components/seach_song_reult.dart';
 
 import '../AudioPlayerTask.dart';
 import '../music_player.dart';
@@ -53,7 +53,7 @@ class _SearchPageState extends State<SearchPage> {
           shrinkWrap: true,
             itemCount: _mediaItems.length,
             scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) => SongListTile(
+            itemBuilder: (context, index) => SearchSongResult(
               context: context,
                 mediaItem: _mediaItems[index],
                 onTap: () async {

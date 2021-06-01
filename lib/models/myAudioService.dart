@@ -52,7 +52,7 @@ class MyAudioService {
     return [];
   }
 
-  static Future<List<Playlist>> getPlaylist() async {
+  static Future<List<Playlist>> getPlaylists() async {
     try {
       String? token = await UserSecureStorage.getToken();
       Dio.Response response = await dio().get('/playlists',
@@ -64,6 +64,18 @@ class MyAudioService {
       print('caught $e : $stacktrace');
     }
     return [];
+  }
+
+  static Future<Playlist?> getPlaylistInfo(int playlistId) async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().get('/playlists/' + playlistId.toString() + '/info',
+          options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
+      return Playlist.fromJson(response.data);
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return null;
   }
 
   static Future<List<MediaItem>> getSongsFromPlaylist(int playlistId) async {
@@ -103,5 +115,16 @@ class MyAudioService {
       print('caught $e : $stacktrace');
     }
     return [];
+  }
+
+  static Future<void> removeSongFromPlaylist(int playlistId, int serverId) async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().delete('/playlists/' + playlistId.toString() + '/remove',
+          data: {'serverId' : serverId},
+          options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
   }
 }

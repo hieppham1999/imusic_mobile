@@ -98,7 +98,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     setState(() {
       _isLoading = true;
     });
-    var updatedList = (await (MyAudioService.getPlaylist()));
+    var updatedList = (await (MyAudioService.getPlaylists()));
 
     setState(() {
       _playlists = updatedList;

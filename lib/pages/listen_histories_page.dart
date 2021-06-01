@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/components/playlist_song_tile.dart';
+import 'package:imusic_mobile/components/seach_song_reult.dart';
 import 'package:imusic_mobile/components/song_list_tile.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 
@@ -46,24 +47,9 @@ class _ListenHistoriesPageState extends State<ListenHistoriesPage> {
           shrinkWrap: true,
           itemCount: _items.length,
           scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) => PlaylistSongTile(
+          itemBuilder: (context, index) => SongListTile(
               mediaItem: _items[index],
-              onTap: () async {
-                if (!AudioService.running) {
-                  await AudioService.start(
-                    backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
-                    androidResumeOnClick: true,
-                    androidEnableQueue: true,
-                  );
-                }
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => MusicPlayer(),
-                ));
-
-                await AudioService.addQueueItem(_items[index]);
-                await AudioService.skipToQueueItem(_items[index].id);
-
-              }),
+          ),
 
         ),
       ),

@@ -44,7 +44,7 @@ Widget songCard(BuildContext context, MediaItem item) {
         case 'addToPlaylist': {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => AddSongToPlaylistDialog(
-            mediaItem: item,)));
+            mediaItem: item)));
         }
         break;
         default: {

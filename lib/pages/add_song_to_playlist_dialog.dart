@@ -45,7 +45,7 @@ class _AddSongToPlaylistDialogState extends State<AddSongToPlaylistDialog> {
                 children: [
                   InkWell(
                   onTap: () {
-                    MyAudioService.addSongToPlaylist(_playlists[index].id, widget.mediaItem.getServerId());
+                      MyAudioService.addSongToPlaylist(_playlists[index].id, widget.mediaItem.getServerId());
                     Navigator.pop(context);
                     },
                     child: Container(
@@ -104,7 +104,7 @@ class _AddSongToPlaylistDialogState extends State<AddSongToPlaylistDialog> {
     setState(() {
       _isLoading = true;
     });
-    var updatedList = (await (MyAudioService.getPlaylist()));
+    var updatedList = (await (MyAudioService.getPlaylists()));
 
     setState(() {
       _playlists = updatedList;

@@ -1,33 +1,47 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-
+import 'package:imusic_mobile/pages/add_song_to_playlist_dialog.dart';
+import 'package:imusic_mobile/models/myAudioService.dart';
 import '../AudioPlayerTask.dart';
-
+import '../music_player.dart';
+import 'package:imusic_mobile/utils/MediaItemExtensions.dart';
 
 class PlaylistSongTile extends StatelessWidget {
   const PlaylistSongTile({
     Key? key,
-    required this.mediaItem,
-    required this.onTap,
-
+    required this.mediaItem, required this.playlistId, required this.reload,
   }) : super(key: key);
 
   final MediaItem mediaItem;
-  final void Function() onTap;
+  final int playlistId;
+  final Function() reload;
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            onTap: onTap,
+            onTap: () async {
+              if (!AudioService.running) {
+                await AudioService.start(
+                  backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+                  androidResumeOnClick: true,
+                  androidEnableQueue: true,
+                );
+              }
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => MusicPlayer(),
+              ));
+
+              await AudioService.addQueueItem(mediaItem);
+              await AudioService.skipToQueueItem(mediaItem.id);
+            },
             child: Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height*0.13,
+              height: MediaQuery.of(context).size.height * 0.13,
               child: Row(
                 children: [
                   Container(
@@ -36,9 +50,9 @@ class PlaylistSongTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16.0),
                       image: DecorationImage(
                           image: (mediaItem.artUri != null
-                              ? NetworkImage(mediaItem.artUri.toString())
-                              : AssetImage('assets/images/no_artwork.png'))
-                          as ImageProvider),
+                                  ? NetworkImage(mediaItem.artUri.toString())
+                                  : AssetImage('assets/images/no_artwork.png'))
+                              as ImageProvider),
                     ),
                     child: AspectRatio(
                       aspectRatio: 1 / 1,
@@ -82,8 +96,34 @@ class PlaylistSongTile extends StatelessWidget {
                   ),
                   // Spacer(),
                   PopupMenuButton(
-                    onSelected: onSelected,
-                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    onSelected: (value) async {
+                      switch (value) {
+                        case 'addToQueue':
+                          {
+                            await AudioService.start(
+                              backgroundTaskEntrypoint:
+                                  audioPlayerTaskEntrypoint,
+                              androidResumeOnClick: true,
+                              androidEnableQueue: true,
+                            );
+                          }
+                          AudioService.addQueueItem(mediaItem);
+                          print('addToQueue');
+                          break;
+                        case 'addToPlaylist':
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => AddSongToPlaylistDialog(
+                                    mediaItem: mediaItem
+                                  )));
+                          break;
+                        case 'removeFromPlaylist':
+                          await MyAudioService.removeSongFromPlaylist(playlistId, mediaItem.getServerId());
+                          reload();
+                          break;
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
                       PopupMenuItem<String>(
                         value: 'addToQueue',
                         child: Text('Add to Queue'),
@@ -93,6 +133,10 @@ class PlaylistSongTile extends StatelessWidget {
                         value: 'addToPlaylist',
                         child: Text('Add to Playlist'),
                       ),
+                          PopupMenuItem<String>(
+                            value: 'removeFromPlaylist',
+                            child: Text('Remove from playlist'),
+                          ),
                     ],
                   ),
                 ],
@@ -108,21 +152,23 @@ class PlaylistSongTile extends StatelessWidget {
     );
   }
 
-
-  void onSelected(String value) async {
-    switch (value) {
-      case 'addToQueue': {
-        await AudioService.start(
-          backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
-          androidResumeOnClick: true,
-          androidEnableQueue: true,
-        );
-      }
-      AudioService.addQueueItem(mediaItem);
-      print('addToQueue');
-      break;
-      case 'addToPlaylist':
-        break;
-    }
-  }
+  // void onSelected(String value, BuildContext context) async {
+  //   switch (value) {
+  //     case 'addToQueue': {
+  //       await AudioService.start(
+  //         backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+  //         androidResumeOnClick: true,
+  //         androidEnableQueue: true,
+  //       );
+  //     }
+  //     AudioService.addQueueItem(mediaItem);
+  //     print('addToQueue');
+  //     break;
+  //     case 'addToPlaylist':
+  //       Navigator.of(context).push(MaterialPageRoute(
+  //           builder: (context) => AddSongToPlaylistDialog(
+  //             mediaItem: item,)));
+  //       break;
+  //   }
+  // }
 }

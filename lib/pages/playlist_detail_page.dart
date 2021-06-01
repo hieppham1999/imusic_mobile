@@ -4,8 +4,6 @@ import 'package:imusic_mobile/components/playlist_song_tile.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 import 'package:imusic_mobile/models/playlist.dart';
 
-import '../AudioPlayerTask.dart';
-import '../music_player.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   const PlaylistDetailPage({
@@ -21,22 +19,25 @@ class PlaylistDetailPage extends StatefulWidget {
 class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
 
   bool _isloading = false;
+  Playlist _playlist = Playlist(id: 0, name: '', tracks: 0, lastUpdated: '');
 
   List<MediaItem> _songs = [];
 
   @override
   void initState() {
-    getSongs(widget.playlist.id);
+    getData(widget.playlist.id);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.playlist.name),
+        title: Text(_playlist.name),
       ),
-      body: Container(
+      body: (_isloading)? Center(child: CircularProgressIndicator(),) :
+      Container(
         padding: EdgeInsets.all(8),
         width: MediaQuery.of(context).size.width,
         // height: double.infinity,
@@ -74,7 +75,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.playlist.name,
+                          _playlist.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -83,7 +84,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                           ),
                         ),
                         Text(
-                          widget.playlist.tracks.toString() + ' songs',
+                          _playlist.tracks.toString() + ' songs',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -93,7 +94,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                           ),
                         ),
                         Text(
-                          '(Last updated: ' + widget.playlist.lastUpdated + ')',
+                          '(Last updated: ' + _playlist.lastUpdated + ')',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -115,29 +116,15 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 color: Colors.grey.shade200,
               ),
             ),
-            (_isloading)? Center(child: CircularProgressIndicator(),heightFactor: 0,) : Expanded(
+            Expanded(
               child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: _songs.length,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (context, index) => PlaylistSongTile(
                     mediaItem: _songs[index],
-                    onTap: () async {
-                      if (!AudioService.running) {
-                        await AudioService.start(
-                          backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
-                          androidResumeOnClick: true,
-                          androidEnableQueue: true,
-                        );
-                      }
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MusicPlayer(),
-                      ));
-
-                      await AudioService.addQueueItem(_songs[index]);
-                      await AudioService.skipToQueueItem(_songs[index].id);
-
-                    }
+                    playlistId: _playlist.id,
+                    reload: () => getData(_playlist.id),
                     ),
               ),
             ),
@@ -147,15 +134,17 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     );
   }
 
-  void getSongs(int playlistId) async {
+  void getData(int playlistId) async {
     setState(() {
       _isloading = true;
     });
 
+    var updatedPlaylistInfo = await MyAudioService.getPlaylistInfo(playlistId);
     var updatedPlaylistSongs = await MyAudioService.getSongsFromPlaylist(playlistId);
 
     setState(() {
       _isloading = false;
+      _playlist = updatedPlaylistInfo!;
       _songs = updatedPlaylistSongs;
     });
   }
