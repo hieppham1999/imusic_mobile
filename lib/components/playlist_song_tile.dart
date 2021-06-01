@@ -1,6 +1,8 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
+import '../AudioPlayerTask.dart';
+
 
 class PlaylistSongTile extends StatelessWidget {
   const PlaylistSongTile({
@@ -83,8 +85,8 @@ class PlaylistSongTile extends StatelessWidget {
                     onSelected: onSelected,
                     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                       PopupMenuItem<String>(
-                        value: 'removeFromQueue',
-                        child: Text('Remove From Queue'),
+                        value: 'addToQueue',
+                        child: Text('Add to Queue'),
                         // enabled: (!isCurrentPlaying) ? true : false,
                       ),
                       PopupMenuItem<String>(
@@ -107,14 +109,19 @@ class PlaylistSongTile extends StatelessWidget {
   }
 
 
-  void onSelected(String value) {
+  void onSelected(String value) async {
     switch (value) {
-      case 'removeFromQueue': {
-        AudioService.removeQueueItem(mediaItem);
-        print('removeFromQueue');
+      case 'addToQueue': {
+        await AudioService.start(
+          backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+          androidResumeOnClick: true,
+          androidEnableQueue: true,
+        );
       }
+      AudioService.addQueueItem(mediaItem);
+      print('addToQueue');
       break;
-      case 'Settings':
+      case 'addToPlaylist':
         break;
     }
   }

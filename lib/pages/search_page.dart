@@ -54,6 +54,7 @@ class _SearchPageState extends State<SearchPage> {
             itemCount: _mediaItems.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) => SongListTile(
+              context: context,
                 mediaItem: _mediaItems[index],
                 onTap: () async {
                   if (!AudioService.running) {

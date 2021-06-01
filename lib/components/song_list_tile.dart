@@ -7,6 +7,7 @@ import '../AudioPlayerTask.dart';
 Widget SongListTile({
   MediaItem? mediaItem,
   onTap,
+  required BuildContext context
 }) {
   if (mediaItem == null) {
     return SizedBox();
@@ -43,50 +44,65 @@ Widget SongListTile({
 
   },
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           padding: EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Container(
-                height: 80.0,
-                width: 80.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.0),
-                  image: DecorationImage(
-                    image: (mediaItem.artUri != null
-                        ? NetworkImage(
-                        mediaItem.artUri.toString())
-                        : AssetImage(
-                        'assets/images/no_artwork.png'))
-                    as ImageProvider),
-
-                  )
-                ),
-              SizedBox(width: 10.0,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    mediaItem.title,
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w600,
+          child: Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height*0.13,
+            child: Row(
+              children: [
+                Container(
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.0),
+                    image: DecorationImage(
+                      image: (mediaItem.artUri != null
+                          ? NetworkImage(
+                          mediaItem.artUri.toString())
+                          : AssetImage(
+                          'assets/images/no_artwork.png'))
+                      as ImageProvider),
+                    ),
+                  child: AspectRatio(
+                    aspectRatio: 1 / 1,
+                  ),
+                  ),
+                SizedBox(width: 10.0,),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          mediaItem.title,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: 10.0,),
+                        Text(
+                          mediaItem.artist!,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  SizedBox(height: 10.0,),
-                  Text(
-                    mediaItem.artist!,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-
-                  )
-                ],
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
         Divider(color: Colors.black45,),

@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:imusic_mobile/components/horizon_music_list.dart';
 
 import '../MediaLibrary.dart';
 
@@ -21,38 +22,50 @@ class _GenreTabState extends State<GenreTab> with AutomaticKeepAliveClientMixin<
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     fetchSongs();
+    super.initState();
+
   }
 
-  void fetchSongs() async {
+  Future<void> fetchSongs() async {
     setState(() {
       loading = true;
     });
-    popGenreItems = (await (_songsByGenre.fetchItem('/songs/genre/10?lim=10')));
-    edmGenreItems = (await (_songsByGenre.fetchItem('/songs/genre/3?lim=10')));
-    rockGenreItems = (await (_songsByGenre.fetchItem('/songs/genre/13?lim=10')));
+    var popList = (await (_songsByGenre.fetchItem('/songs/genre/10?lim=10')));
+    var edmList = (await (_songsByGenre.fetchItem('/songs/genre/3?lim=10')));
+    var rockList = (await (_songsByGenre.fetchItem('/songs/genre/13?lim=10')));
     setState(() {
-      // popGenreItems = updatedItems;
-      // edmGenreItems = updatedItems2;
+      popGenreItems = popList;
+      edmGenreItems = edmList;
+      rockGenreItems = rockList;
       loading = false;
     });
   }
 
   @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            // HorizonMusicList(name: "Pop", mediaItems: popGenreItems),
-            // HorizonMusicList(name: "EDM", mediaItems: edmGenreItems),
-            // HorizonMusicList(name: "Rock", mediaItems: rockGenreItems),
-          ],
+    if (loading) return Center(child: CircularProgressIndicator(),);
+    return RefreshIndicator(
+      onRefresh: _pullRefresh,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              HorizonMusicList(name: "Pop", mediaItems: popGenreItems),
+              HorizonMusicList(name: "EDM", mediaItems: edmGenreItems),
+              HorizonMusicList(name: "Rock", mediaItems: rockGenreItems),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _pullRefresh() async {
+    await fetchSongs();
   }
 }

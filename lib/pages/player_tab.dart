@@ -89,6 +89,21 @@ class _PlayerTabState extends State<PlayerTab> {
               // UI to show when we're running, i.e. player state/controls.
               Row(
                 children: [
+                  StreamBuilder<AudioServiceShuffleMode>(
+                      stream: AudioService.playbackStateStream
+                          .map((state) => state.shuffleMode)
+                          .distinct(),
+                      builder: (context, snapshot) {
+                        final shuffleMode = snapshot.data ?? AudioServiceShuffleMode.none;
+                        return IconButton(
+                          icon: (shuffleMode == AudioServiceShuffleMode.all) ? Icon(Icons.shuffle_rounded, color: Colors.lightBlueAccent,) : Icon(Icons.shuffle_rounded, color: Colors.black38,),
+                          iconSize: 32,
+                          onPressed: () async {
+                            await AudioService.setShuffleMode(AudioServiceShuffleMode.all);
+                          }, );
+
+                      }),
+
                   // Queue display/controls.
                   StreamBuilder<QueueState>(
                     stream: _queueStateStream,
@@ -139,37 +154,52 @@ class _PlayerTabState extends State<PlayerTab> {
                       );
                     },
                   ),
+                  StreamBuilder<AudioServiceRepeatMode>(
+                      stream: AudioService.playbackStateStream
+                          .map((state) => state.repeatMode)
+                          .distinct(),
+                      builder: (context, snapshot) {
+                        final repeatMode = snapshot.data ?? AudioServiceRepeatMode.none;
+                        print('ui: ' + repeatMode.toString());
+                        return IconButton(
+                          icon: (repeatMode == AudioServiceRepeatMode.one) ? Icon(Icons.repeat_one_rounded) : Icon(Icons.repeat_rounded, color: Colors.black38,),
+                          iconSize: 32,
+                          onPressed: () {
+                            AudioService.setRepeatMode(AudioServiceRepeatMode.one);
+                          }, );
+
+                      }),
                 ],
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
               // Display the processing state.
-              StreamBuilder<AudioProcessingState>(
-                stream: AudioService.playbackStateStream
-                    .map((state) => state.processingState)
-                    .distinct(),
-                builder: (context, snapshot) {
-                  final processingState =
-                      snapshot.data ?? AudioProcessingState.none;
-                  return Text(
-                      "Processing state: ${describeEnum(processingState)}");
-                },
-              ),
-              // Display the latest custom event.
-              StreamBuilder(
-                stream: AudioService.customEventStream,
-                builder: (context, snapshot) {
-                  return Text("custom event: ${snapshot.data}");
-                },
-              ),
-              // Display the notification click status.
-              StreamBuilder<bool>(
-                stream: AudioService.notificationClickEventStream,
-                builder: (context, snapshot) {
-                  return Text(
-                    'Notification Click Status: ${snapshot.data}',
-                  );
-                },
-              ),
+              // StreamBuilder<AudioProcessingState>(
+              //   stream: AudioService.playbackStateStream
+              //       .map((state) => state.processingState)
+              //       .distinct(),
+              //   builder: (context, snapshot) {
+              //     final processingState =
+              //         snapshot.data ?? AudioProcessingState.none;
+              //     return Text(
+              //         "Processing state: ${describeEnum(processingState)}");
+              //   },
+              // ),
+              // // Display the latest custom event.
+              // StreamBuilder(
+              //   stream: AudioService.customEventStream,
+              //   builder: (context, snapshot) {
+              //     return Text("custom event: ${snapshot.data}");
+              //   },
+              // ),
+              // // Display the notification click status.
+              // StreamBuilder<bool>(
+              //   stream: AudioService.notificationClickEventStream,
+              //   builder: (context, snapshot) {
+              //     return Text(
+              //       'Notification Click Status: ${snapshot.data}',
+              //     );
+              //   },
+              // ),
             ],
           );
         },
@@ -211,6 +241,37 @@ class _PlayerTabState extends State<PlayerTab> {
   }
 
   pause() => AudioService.pause();
+
+  Widget _loopButton (AudioServiceRepeatMode repeatMode) {
+    print('init RepeatMode: ' + repeatMode.toString());
+    const cycleRepeatMode = [
+      AudioServiceRepeatMode.none,
+      AudioServiceRepeatMode.all,
+      AudioServiceRepeatMode.one
+    ];
+
+    // final index = cycleRepeatMode.indexOf(repeatMode);
+
+    Icon loopIcon;
+    switch (repeatMode) {
+      case AudioServiceRepeatMode.one:
+        loopIcon = Icon(Icons.repeat_one_rounded, color: Colors.lightBlueAccent,);
+        break;
+      case AudioServiceRepeatMode.all:
+        loopIcon = Icon(Icons.repeat_rounded, color: Colors.lightBlueAccent,);
+        break;
+      case AudioServiceRepeatMode.none:
+        loopIcon = Icon(Icons.repeat_rounded,);
+        break;
+      default:
+        loopIcon = Icon(Icons.repeat_on,);
+    }
+    return IconButton(onPressed: () {
+      print('onpressed: ' + cycleRepeatMode[(cycleRepeatMode.indexOf(repeatMode) + 1) % cycleRepeatMode.length].toString());
+      // AudioService.setRepeatMode(cycleRepeatMode[(cycleRepeatMode.indexOf(repeatMode) + 1) % cycleRepeatMode.length]);
+      AudioService.setRepeatMode(AudioServiceRepeatMode.one);
+    }, icon: loopIcon);
+  }
 
   IconButton playButton() => IconButton(
         icon: Icon(Icons.play_arrow),

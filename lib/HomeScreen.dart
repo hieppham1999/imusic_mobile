@@ -19,9 +19,9 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
 
   final List<Tab> myTabs = <Tab>[
-    Tab(text: 'Trang Chủ'),
-    Tab(text: 'Thể loại'),
-    Tab(text: 'Bài hát mới'),
+    Tab(text: 'Home'),
+    Tab(text: 'Genre'),
+    Tab(text: 'New Song'),
   ];
 
   late TabController _tabController;

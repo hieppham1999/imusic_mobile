@@ -27,7 +27,7 @@ class MyAudioService {
       }
   }
 
-  static Future<void> listenFor15Sec(int serverId) async {
+  static Future<void> listenFor20Sec(int serverId) async {
     try {
       String? token = await UserSecureStorage.getToken();
       Dio.Response response = await dio().put('/me/plus-rcm-point',
@@ -89,5 +89,19 @@ class MyAudioService {
     } catch (e, stacktrace) {
       print('caught $e : $stacktrace');
     }
+  }
+
+  static Future<List<MediaItem>> getUserListenHistories() async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().get('/me/listen-histories',
+          options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
   }
 }

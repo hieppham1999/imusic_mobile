@@ -9,7 +9,7 @@ Widget songCard(BuildContext context, MediaItem item) {
   return PopupMenuContainer(
     items: [
       PopupMenuItem(child: Text('Add to Now Playing'), value: 'addSongToQueue',),
-      PopupMenuItem(child: Text('Save To Playlist'), value: 'addSongToPlaylist',),
+      PopupMenuItem(child: Text('Add to playlist...'), value: 'addToPlaylist',),
     ],
     onTap: () async {
       if (!AudioService.running) {
@@ -41,7 +41,7 @@ Widget songCard(BuildContext context, MediaItem item) {
           print('addSongToQueue');
         }
         break;
-        case 'addSongToPlaylist': {
+        case 'addToPlaylist': {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => AddSongToPlaylistDialog(
             mediaItem: item,)));

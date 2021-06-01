@@ -1,7 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/components/playlist_song_tile.dart';
-import 'package:imusic_mobile/components/song_list_tile.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 import 'package:imusic_mobile/models/playlist.dart';
 

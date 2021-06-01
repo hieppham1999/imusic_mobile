@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:imusic_mobile/pages/listen_histories_page.dart';
 import 'package:imusic_mobile/pages/playlist_page.dart';
 import 'package:imusic_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
@@ -16,18 +18,31 @@ class SideDrawer extends StatelessWidget {
       return ListView(
         children: [
           auth.authenticated ? _buildDrawerHeader() : SizedBox(),
+          ListTile(
+            title: Text(
+                'Account',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500
+            ),),
+          ),
           auth.authenticated
               ? Column(
                   children: [
-                    ListTile(
-                      title: Text('Tài Khoản'),
-                    ),
                     ListTile(
                       title: Text('Playlists'),
                       leading: Icon(Icons.playlist_play),
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => PlaylistPage()));
+                      },
+                    ),
+                    ListTile(
+                      title: Text('Listen Histories'),
+                      leading: Icon(Icons.history),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ListenHistoriesPage()));
                       },
                     ),
                     ListTile(
@@ -41,9 +56,6 @@ class SideDrawer extends StatelessWidget {
                 )
               : Column(
                   children: [
-                    ListTile(
-                      title: Text('Account'),
-                    ),
                     ListTile(
                       title: Text('Login'),
                       leading: Icon(Icons.login_rounded),
@@ -64,38 +76,41 @@ class SideDrawer extends StatelessWidget {
                   ],
                 ),
           ListTile(
-            title: Text('Danh sách nhạc'),
+            title: Text('Music Lists',
+            style: TextStyle(
+                fontSize: 16,
+            fontWeight: FontWeight.w500),),
           ),
           ListTile(
-            title: Text('Nhạc Việt Nam'),
+            title: Text('Vietnamese'),
             leading: Icon(Icons.music_note),
           ),
           ListTile(
-            title: Text('Nhạc US - UK'),
+            title: Text('US - UK'),
             leading: Icon(Icons.music_note),
           ),
           ListTile(
-            title: Text('Nhạc Nhật Bản'),
+            title: Text('Japanese'),
             leading: Icon(Icons.music_note),
           ),
           ListTile(
-            title: Text('Nhạc Trung Quốc'),
+            title: Text('Chinese'),
             leading: Icon(Icons.music_note),
           ),
           ListTile(
-            title: Text('Nhạc Hàn Quốc'),
+            title: Text('Korean'),
             leading: Icon(Icons.music_note),
           ),
           ListTile(
-            title: Text('Nhạc Pháp'),
+            title: Text('French'),
             leading: Icon(Icons.music_note),
           ),
           ListTile(
-            title: Text('Nhạc Nga'),
+            title: Text('Russian'),
             leading: Icon(Icons.music_note),
           ),
           ListTile(
-            title: Text('Nhạc các nước khác'),
+            title: Text('Others'),
             leading: Icon(Icons.music_note),
           ),
         ],

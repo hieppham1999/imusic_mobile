@@ -38,7 +38,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
   int? get index => _player.currentIndex;
   MediaItem? get mediaItem => index == null ? null : queue[index!];
 
-  void checkAuthenticatedStatus() async{
+  Future<void> checkAuthenticatedStatus() async{
     _token = await UserSecureStorage.getToken();
     if (_token != null) {
       _isLoggedIn = true;
@@ -129,10 +129,10 @@ class AudioPlayerTask extends BackgroundAudioTask{
     }
     timer = Timer.periodic(Duration(seconds: 1), (timer) async {
       print('playing time: $playingTime');
-      if (playingTime <= 15) {
+      if (playingTime <= 20) {
         playingTime++;
       } else {
-        await MyAudioService.listenFor15Sec(mediaItem!.getServerId());
+        await MyAudioService.listenFor20Sec(mediaItem!.getServerId());
         timer.cancel();
       }
     });
@@ -153,7 +153,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
   @override
   Future<void> onPlay()  async {
     _player.play();
-    checkAuthenticatedStatus();
+    await checkAuthenticatedStatus();
 
     // if User has logged in, count listen time and send to server
     if (_isLoggedIn) {
@@ -189,6 +189,26 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   @override
   Future<void> onSeekBackward(bool begin) async => _seekContinuously(begin, -1);
+
+  @override
+  Future<void> onSetRepeatMode(AudioServiceRepeatMode repeatMode) async{
+    print('background: ' + repeatMode.toString());
+    switch (repeatMode) {
+      case AudioServiceRepeatMode.none:
+        await _player.setLoopMode(LoopMode.off);
+        break;
+      case AudioServiceRepeatMode.one:
+        await _player.setLoopMode(LoopMode.one);
+        break;
+      case AudioServiceRepeatMode.all:
+        await _player.setLoopMode(LoopMode.all);
+        break;
+      case AudioServiceRepeatMode.group:
+        break;
+    }
+    return super.onSetRepeatMode(repeatMode);
+  }
+
 
   /// Jumps away from the current position by [offset].
   Future<void> _seekRelative(Duration offset) async {
@@ -275,4 +295,16 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
     return super.onAddQueueItem(mediaItem);
   }
+
+@override
+  Future<void> onSetShuffleMode(AudioServiceShuffleMode shuffleMode) async {
+    if (shuffleMode == AudioServiceShuffleMode.all) {
+      _player.setShuffleModeEnabled(true);
+    } else {
+      _player.setShuffleModeEnabled(false);
+    }
+    print('background: ' + shuffleMode.toString());
+    return super.onSetShuffleMode(shuffleMode);
+  }
+
 }
