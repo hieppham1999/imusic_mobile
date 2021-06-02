@@ -4,6 +4,9 @@ import 'package:imusic_mobile/components/playlist_song_tile.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 import 'package:imusic_mobile/models/playlist.dart';
 
+import '../AudioPlayerTask.dart';
+import '../music_player.dart';
+
 
 class PlaylistDetailPage extends StatefulWidget {
   const PlaylistDetailPage({
@@ -70,6 +73,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                   ),
                   SizedBox(width: 10,),
                   Container(
+                    width: MediaQuery.of(context).size.width*0.6,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,6 +107,52 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                               color: Colors.grey,
                               fontWeight: FontWeight.w400
                           ),
+                        ),
+                        Spacer(),
+                        // TextButton(
+                        //     onPressed: () {},
+                        //     child: Text(
+                        //       'Shuffle Play',
+                        //       style: TextStyle(
+                        //
+                        //       ),
+                        //     ))
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width*0.4,
+                              child: ElevatedButton(
+                                  onPressed: () async{
+                                    if (_songs.isEmpty) {
+                                      return;
+                                    } else {
+                                      if (!AudioService.running) {
+                                        await AudioService.start(
+                                          backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+                                          androidResumeOnClick: true,
+                                          androidEnableQueue: true,
+                                        );
+                                      }
+                                      await AudioService.updateQueue(_songs);
+                                      await AudioService.skipToQueueItem(_songs[0].id);
+                                      await Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) => MusicPlayer()));
+                                    }
+                                  },
+                                  child: Text('Shuffle play'),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue),
+                                  shape:
+                                  MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(18.0),
+                                          side:
+                                          BorderSide(color: Colors.transparent))),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

@@ -34,9 +34,9 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
 
   // List<MediaItem> get queue => _mediaLibrary.items;
-  List<MediaItem> queue = [];
+  List<MediaItem> _queue = [];
   int? get index => _player.currentIndex;
-  MediaItem? get mediaItem => index == null ? null : queue[index!];
+  MediaItem? get mediaItem => index == null ? null : _queue[index!];
 
   Future<void> checkAuthenticatedStatus() async{
     _token = await UserSecureStorage.getToken();
@@ -52,7 +52,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
     // Broadcast media item changes.
     _player.currentIndexStream.listen((index) {
-      if (index != null) AudioServiceBackground.setMediaItem(queue[index]);
+      if (index != null) AudioServiceBackground.setMediaItem(_queue[index]);
     });
 
     // Propagate all events from the audio player to AudioService clients.
@@ -80,12 +80,12 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   @override
   Future<void> onRemoveQueueItem(MediaItem mediaItem) async {
-    queue.remove(mediaItem);
-    await AudioServiceBackground.setQueue(queue);
+    _queue.remove(mediaItem);
+    await AudioServiceBackground.setQueue(_queue);
     try {
       await _player.setAudioSource(ConcatenatingAudioSource(
         children:
-        queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+        _queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
       ));
     } catch (e) {
       print("Error: $e");
@@ -100,7 +100,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
   Future<void> onSkipToQueueItem(String mediaId) async{
     // Then default implementations of onSkipToNext and onSkipToPrevious will
     // delegate to this method.
-    final newIndex = queue.indexWhere((item) => item.id == mediaId);
+    final newIndex = _queue.indexWhere((item) => item.id == mediaId);
     if (newIndex == -1) return;
     // During a skip, the player may enter the buffering state. We could just
     // propagate that state directly to AudioService clients but AudioService
@@ -279,13 +279,14 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   @override
   Future<void> onAddQueueItem(MediaItem mediaItem) async {
-      queue.add(mediaItem);
-      queue = queue.toSet().toList();
-      await AudioServiceBackground.setQueue(queue);
+      _queue.add(mediaItem);
+      // distinc mediaitem
+      _queue = _queue.toSet().toList();
+      await AudioServiceBackground.setQueue(_queue);
     try {
       await _player.setAudioSource(ConcatenatingAudioSource(
         children:
-        queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+        _queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
       ));
     } catch (e) {
       print("Error: $e");
@@ -305,6 +306,22 @@ class AudioPlayerTask extends BackgroundAudioTask{
     }
     print('background: ' + shuffleMode.toString());
     return super.onSetShuffleMode(shuffleMode);
+  }
+  @override
+  Future<void> onUpdateQueue(List<MediaItem> queue) async{
+    _queue = queue;
+    await AudioServiceBackground.setQueue(_queue);
+    try {
+      await _player.setAudioSource(ConcatenatingAudioSource(
+        children:
+        _queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
+      ));
+    } catch (e) {
+      print("Error: $e");
+      onStop();
+    }
+    return super.onUpdateQueue(queue);
+
   }
 
 }

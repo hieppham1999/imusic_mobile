@@ -103,6 +103,35 @@ class MyAudioService {
     }
   }
 
+  static Future<int?> createPlaylist(String playListName) async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().post('/playlists/create',
+          data: {'playlistName' : playListName},
+          options: Dio.Options(
+              headers: {'Authorization': 'Bearer $token'},
+              validateStatus: (status) { return status! < 500; },
+              ));
+      return response.statusCode;
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+  }
+
+  static Future<int?> deletePlaylist(int playlistId) async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().delete('/playlists/' + playlistId.toString() + '/delete',
+          options: Dio.Options(
+            headers: {'Authorization': 'Bearer $token'},
+            validateStatus: (status) { return status! < 500; },
+          ));
+      return response.statusCode;
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+  }
+
   static Future<List<MediaItem>> getUserListenHistories() async {
     try {
       String? token = await UserSecureStorage.getToken();

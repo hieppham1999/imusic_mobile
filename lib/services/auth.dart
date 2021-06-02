@@ -26,16 +26,6 @@ class Auth extends ChangeNotifier {
       return response.statusCode;
     } catch (e) {
       print(e);
-      // print(response.data.toString());
-      // print(response.statusMessage);
-      // print(response.statusCode);
-      // // print(response.data['token'].toString());
-      // if (response.statusCode != 200){
-      //   print('-----');
-      //   print(response.statusMessage);
-      //   print('====');
-      //   // throw Exception(response.statusMessage);
-      // }
 
 
     }
