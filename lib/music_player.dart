@@ -29,42 +29,44 @@ class _MusicPlayerState extends State<MusicPlayer> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey,
-      appBar: AppBar(
-        backgroundColor: Colors.grey,
-        shadowColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_drop_down_circle),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+      appBar: PreferredSize(
+        
+        preferredSize: Size.fromHeight(80),
+        child: AppBar(
+          backgroundColor: Colors.grey,
+          shadowColor: Colors.transparent,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_drop_down_circle),
+            onPressed: () {
+              Navigator.pop(context);
+            },
 
-        ),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.transparent,
-          indicatorSize: TabBarIndicatorSize.label,
-          isScrollable: true,
-          labelColor: Colors.red,
-          unselectedLabelColor: Colors.white,
-          tabs: <Widget>[
-            Tab(
-              icon: Icon(Icons.circle,
+          ),
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.transparent,
+            indicatorSize: TabBarIndicatorSize.label,
+            isScrollable: true,
+            labelColor: Colors.red,
+            unselectedLabelColor: Colors.white,
+            tabs: <Widget>[
+              Tab(
+                icon: Icon(Icons.circle,
+                  size: 12),
+              ),
+              Tab(icon: Icon(Icons.circle,
                 size: 12),
-            ),
-            Tab(icon: Icon(Icons.circle,
-              size: 12),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
-      body: SafeArea(
-        child: TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              PlayerTab(),
-              NowPlayingTab(),
-            ]
-        ),
+      body: TabBarView(
+          controller: _tabController,
+          children: <Widget>[
+            PlayerTab(),
+            NowPlayingTab(),
+          ]
       ),
     );
   }

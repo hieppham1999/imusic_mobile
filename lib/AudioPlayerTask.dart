@@ -32,8 +32,6 @@ class AudioPlayerTask extends BackgroundAudioTask{
   Seeker? _seeker;
   late StreamSubscription<PlaybackEvent> _eventSubscription;
 
-
-  // List<MediaItem> get queue => _mediaLibrary.items;
   List<MediaItem> _queue = [];
   int? get index => _player.currentIndex;
   MediaItem? get mediaItem => index == null ? null : _queue[index!];
@@ -104,7 +102,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
     if (newIndex == -1) return;
     // During a skip, the player may enter the buffering state. We could just
     // propagate that state directly to AudioService clients but AudioService
-    // has some more specific states we could use for skipping to next and
+    // has some more specific states we coukipping to next and
     // previous. This variable holds the preferred state to send instead of
     // buffering during a skip, and it is cleared as soon as the player exits
     // buffering (see the listener in onStart).
@@ -120,7 +118,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
     playingTime = 0;
     _isRequestSent = false;
 
-    onPlay();
+    AudioService.play();
   }
 
   void _startTimer() {
@@ -206,6 +204,7 @@ class AudioPlayerTask extends BackgroundAudioTask{
       case AudioServiceRepeatMode.group:
         break;
     }
+    AudioServiceBackground.setState(repeatMode: repeatMode);
     return super.onSetRepeatMode(repeatMode);
   }
 
@@ -297,25 +296,19 @@ class AudioPlayerTask extends BackgroundAudioTask{
     return super.onAddQueueItem(mediaItem);
   }
 
-@override
-  Future<void> onSetShuffleMode(AudioServiceShuffleMode shuffleMode) async {
-    if (shuffleMode == AudioServiceShuffleMode.all) {
-      _player.setShuffleModeEnabled(true);
-    } else {
-      _player.setShuffleModeEnabled(false);
-    }
-    print('background: ' + shuffleMode.toString());
-    return super.onSetShuffleMode(shuffleMode);
-  }
+
+
   @override
   Future<void> onUpdateQueue(List<MediaItem> queue) async{
     _queue = queue;
     await AudioServiceBackground.setQueue(_queue);
+
     try {
       await _player.setAudioSource(ConcatenatingAudioSource(
         children:
         _queue.map((item) => AudioSource.uri(Uri.parse(item.id))).toList(),
       ));
+      AudioServiceBackground.setMediaItem(_queue.first);
     } catch (e) {
       print("Error: $e");
       onStop();
@@ -324,4 +317,22 @@ class AudioPlayerTask extends BackgroundAudioTask{
 
   }
 
+  @override
+  Future<void> onSetSpeed(double speed) {
+    _player.setSpeed(speed);
+    return super.onSetSpeed(speed);
+  }
+
+  @override
+  Future<void> onSetShuffleMode(AudioServiceShuffleMode shuffleMode) {
+
+    if (shuffleMode == AudioServiceShuffleMode.all) {
+      _player.setShuffleModeEnabled(true);
+    } else {
+      _player.setShuffleModeEnabled(false);
+    }
+    AudioServiceBackground.setState(shuffleMode: shuffleMode);
+    print('background: ' + shuffleMode.toString());
+    return super.onSetShuffleMode(shuffleMode);
+  }
 }

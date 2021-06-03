@@ -18,7 +18,7 @@ class PlaylistDetailPage extends StatefulWidget {
 }
 
 class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
-  bool _isloading = false;
+  bool _isLoading = false;
   Playlist _playlist = Playlist(id: 0, name: '', tracks: 0, lastUpdated: '');
   String appBarTile = 'Playlist';
 
@@ -36,7 +36,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
       appBar: AppBar(
         title: Text(appBarTile),
       ),
-      body: (_isloading)
+      body: (_isLoading)
           ? Center(
               child: CircularProgressIndicator(),
             )
@@ -146,8 +146,10 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                                           }
                                           await AudioService.updateQueue(
                                               _songs);
+                                          await AudioService.setShuffleMode(AudioServiceShuffleMode.all);
+
                                           await AudioService.skipToQueueItem(
-                                              _songs[0].id);
+                                              _songs.first.id);
                                           await Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
@@ -189,27 +191,34 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                       color: Colors.grey.shade200,
                     ),
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _songs.length,
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (context, index) => PlaylistSongTile(
-                        mediaItem: _songs[index],
-                        playlistId: _playlist.id,
-                        reload: () => getData(_playlist.id),
-                      ),
-                    ),
-                  ),
+                  buildItems(),
                 ],
               ),
             ),
     );
   }
 
+  Expanded buildItems() {
+    if (_songs.isEmpty) return Expanded(child: Center(child: Text('No Items'),));
+    else {
+      return Expanded(
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: _songs.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) => PlaylistSongTile(
+            mediaItem: _songs[index],
+            playlistId: _playlist.id,
+            reload: () => getData(_playlist.id),
+          ),
+        ),
+      );
+    }
+  }
+
   void getData(int playlistId) async {
     setState(() {
-      _isloading = true;
+      _isLoading = true;
     });
 
     var updatedPlaylistInfo = await MyAudioService.getPlaylistInfo(playlistId);
@@ -217,7 +226,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
         await MyAudioService.getSongsFromPlaylist(playlistId);
 
     setState(() {
-      _isloading = false;
+      _isLoading = false;
       _playlist = updatedPlaylistInfo!;
       appBarTile = _playlist.name;
       _songs = updatedPlaylistSongs;
@@ -291,7 +300,7 @@ class _SystemPadding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context);
+    // var mediaQuery = MediaQuery.of(context);
     return new AnimatedContainer(
         // padding: mediaQuery.viewInsets,
         duration: const Duration(milliseconds: 300),
