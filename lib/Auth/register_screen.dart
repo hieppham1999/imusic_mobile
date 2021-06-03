@@ -77,9 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: InputDecoration(
                           icon: Icon(Icons.email_rounded), hintText: 'Email'),
                       controller: _emailController,
-                      validator:
-                      validateEmail)
-                  ,
+                      validator: validateEmail),
                   SizedBox(
                     height: 20,
                   ),
@@ -93,7 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       obscureText: true,
                       controller: _passwordController,
                       validator: (value) {
-                        if (value!.isEmpty){
+                        if (value!.isEmpty) {
                           return 'Password can\'t be empty';
                         }
                         if (value.length < 6) {

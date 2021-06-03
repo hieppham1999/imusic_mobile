@@ -4,45 +4,50 @@ import 'package:imusic_mobile/components/popup_menu_container.dart';
 
 import '../AudioPlayerTask.dart';
 
-Widget SearchSongResult({
-  MediaItem? mediaItem,
-  onTap,
-  required BuildContext context
-}) {
+Widget SearchSongResult(
+    {MediaItem? mediaItem, onTap, required BuildContext context}) {
   if (mediaItem == null) {
     return SizedBox();
   }
   return PopupMenuContainer(
     items: [
-      PopupMenuItem(child: Text('Add to Now Playing'), value: 'addToQueue',),
-      PopupMenuItem(child: Text('Save To Playlist'), value: 'addToPlaylist',),
+      PopupMenuItem(
+        child: Text('Add to Now Playing'),
+        value: 'addToQueue',
+      ),
+      PopupMenuItem(
+        child: Text('Save To Playlist'),
+        value: 'addToPlaylist',
+      ),
     ],
     onTap: onTap,
     onItemSelected: (value) async {
       switch (value) {
-        case 'addToQueue': {
-          if (!AudioService.running) {
-            await AudioService.start(
-              backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
-              androidResumeOnClick: true,
-              androidEnableQueue: true,
-            );
+        case 'addToQueue':
+          {
+            if (!AudioService.running) {
+              await AudioService.start(
+                backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+                androidResumeOnClick: true,
+                androidEnableQueue: true,
+              );
+            }
+            AudioService.addQueueItem(mediaItem);
+            print('addToQueue');
           }
-          AudioService.addQueueItem(mediaItem);
-          print('addToQueue');
-        }
-        break;
-        case 'addToPlaylist': {
-          print('addToPlaylist');
-        }
-        break;
-        default: {
-          print('null');
-          return;
-        }
+          break;
+        case 'addToPlaylist':
+          {
+            print('addToPlaylist');
+          }
+          break;
+        default:
+          {
+            print('null');
+            return;
+          }
       }
-
-  },
+    },
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -50,7 +55,7 @@ Widget SearchSongResult({
           padding: EdgeInsets.all(8.0),
           child: Container(
             width: double.infinity,
-            height: MediaQuery.of(context).size.height*0.13,
+            height: MediaQuery.of(context).size.height * 0.13,
             child: Row(
               children: [
                 Container(
@@ -58,18 +63,18 @@ Widget SearchSongResult({
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
                     image: DecorationImage(
-                      image: (mediaItem.artUri != null
-                          ? NetworkImage(
-                          mediaItem.artUri.toString())
-                          : AssetImage(
-                          'assets/images/no_artwork.png'))
-                      as ImageProvider),
-                    ),
+                        image: (mediaItem.artUri != null
+                                ? NetworkImage(mediaItem.artUri.toString())
+                                : AssetImage('assets/images/no_artwork.png'))
+                            as ImageProvider),
+                  ),
                   child: AspectRatio(
                     aspectRatio: 1 / 1,
                   ),
-                  ),
-                SizedBox(width: 10.0,),
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
                 Expanded(
                   child: Container(
                     width: double.infinity,
@@ -86,7 +91,9 @@ Widget SearchSongResult({
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: 10.0,),
+                        SizedBox(
+                          height: 10.0,
+                        ),
                         Text(
                           mediaItem.artist!,
                           overflow: TextOverflow.ellipsis,
@@ -105,9 +112,10 @@ Widget SearchSongResult({
             ),
           ),
         ),
-        Divider(color: Colors.black45,),
+        Divider(
+          color: Colors.black45,
+        ),
       ],
     ),
   );
-
 }

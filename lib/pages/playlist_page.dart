@@ -1,4 +1,3 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/components/now_playing_bar.dart';
 import 'package:imusic_mobile/components/popup_menu_container.dart';
@@ -21,6 +20,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void initState() {
     fetchData();
     super.initState();
+  }
+
+  Future<void> _pullRefresh() async {
+    await fetchData();
   }
 
   @override
@@ -48,79 +51,87 @@ class _PlaylistPageState extends State<PlaylistPage> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 8 / 11,
-                ),
-                itemCount: _playlists.length,
-                itemBuilder: (context, index) => PopupMenuContainer(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            PlaylistDetailPage(playlist: _playlists[index])));
-                  },
-                  onItemSelected: (value) async{
-                    switch (value) {
-                      // case 'addSongsToQueue':
-                      //   print('addSongsToQueue');
-                      //   break;
-                      case 'deletePlaylist':
-                        print('deletePlaylist');
-                        final responseCode = await MyAudioService.deletePlaylist(_playlists[index].id);
-                        if (responseCode == 200) {
-                          final snackBar = SnackBar(content: Text('Delete successfully!'));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          setState(() {
-                            fetchData();
-                          });
-                        } else {
-                          final snackBar = SnackBar(content: Text('Delete failed!'));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        }
-                        break;
-                    }
-
-                  },
-                  items: [
-                    // PopupMenuItem(
-                    //   child: Text('Add to Now Playing'),
-                    //   value: 'addSongsToQueue',
-                    // ),
-                    PopupMenuItem(
-                      child: Text('Delete playlist'),
-                      value: 'deletePlaylist',
-                    ),
-                  ],
-                  child: Container(
-                    child: Card(
-                      shadowColor: Colors.grey,
-                      child: Wrap(
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            color: Colors.lightBlueAccent,
-                            child: AspectRatio(
-                              aspectRatio: 1 / 1,
+          : RefreshIndicator(
+              onRefresh: _pullRefresh,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 8 / 11,
+                  ),
+                  itemCount: _playlists.length,
+                  itemBuilder: (context, index) => PopupMenuContainer(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => PlaylistDetailPage(
+                              playlistId: _playlists[index].id)));
+                    },
+                    onItemSelected: (value) async {
+                      switch (value) {
+                        // case 'addSongsToQueue':
+                        //   print('addSongsToQueue');
+                        //   break;
+                        case 'deletePlaylist':
+                          print('deletePlaylist');
+                          final responseCode =
+                              await MyAudioService.deletePlaylist(
+                                  _playlists[index].id);
+                          if (responseCode == 200) {
+                            final snackBar =
+                                SnackBar(content: Text('Delete successfully!'));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                            setState(() {
+                              fetchData();
+                            });
+                          } else {
+                            final snackBar =
+                                SnackBar(content: Text('Delete failed!'));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                          break;
+                      }
+                    },
+                    items: [
+                      // PopupMenuItem(
+                      //   child: Text('Add to Now Playing'),
+                      //   value: 'addSongsToQueue',
+                      // ),
+                      PopupMenuItem(
+                        child: Text('Delete playlist'),
+                        value: 'deletePlaylist',
+                      ),
+                    ],
+                    child: Container(
+                      child: Card(
+                        shadowColor: Colors.grey,
+                        child: Wrap(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              color: Colors.lightBlueAccent,
+                              child: AspectRatio(
+                                aspectRatio: 1 / 1,
+                              ),
                             ),
-                          ),
-                          ListTile(
-                            title: Text(
-                              _playlists[index].name,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            ListTile(
+                              title: Text(
+                                _playlists[index].name,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              subtitle: Text(
+                                _playlists[index].tracks.toString() + ' songs',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
-                            subtitle: Text(
-                              _playlists[index].tracks.toString() + ' songs',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -173,7 +184,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       Navigator.of(context).pop(false);
                     }),
                 TextButton(
-                    child: const Text('OPEN'),
+                    child: const Text('CREATE'),
                     onPressed: () async {
                       print(typedValue);
                       MyAudioService.createPlaylist(typedValue)

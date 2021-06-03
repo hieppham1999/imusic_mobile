@@ -38,10 +38,7 @@ class SongListTile extends StatelessWidget {
             },
             child: Container(
               width: double.infinity,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.13,
+              height: MediaQuery.of(context).size.height * 0.13,
               child: Row(
                 children: [
                   Container(
@@ -50,9 +47,9 @@ class SongListTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16.0),
                       image: DecorationImage(
                           image: (mediaItem.artUri != null
-                              ? NetworkImage(mediaItem.artUri.toString())
-                              : AssetImage('assets/images/no_artwork.png'))
-                          as ImageProvider),
+                                  ? NetworkImage(mediaItem.artUri.toString())
+                                  : AssetImage('assets/images/no_artwork.png'))
+                              as ImageProvider),
                     ),
                     child: AspectRatio(
                       aspectRatio: 1 / 1,
@@ -102,7 +99,7 @@ class SongListTile extends StatelessWidget {
                           {
                             await AudioService.start(
                               backgroundTaskEntrypoint:
-                              audioPlayerTaskEntrypoint,
+                                  audioPlayerTaskEntrypoint,
                               androidResumeOnClick: true,
                               androidEnableQueue: true,
                             );
@@ -112,15 +109,13 @@ class SongListTile extends StatelessWidget {
                           break;
                         case 'addToPlaylist':
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  AddSongToPlaylistDialog(
-                                    mediaItem: mediaItem
-                                  )));
+                              builder: (context) => AddSongToPlaylistDialog(
+                                  mediaItem: mediaItem)));
                           break;
                       }
                     },
                     itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<String>>[
+                        <PopupMenuEntry<String>>[
                       PopupMenuItem<String>(
                         value: 'addToQueue',
                         child: Text('Add to Queue'),

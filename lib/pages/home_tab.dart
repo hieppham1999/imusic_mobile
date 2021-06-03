@@ -6,13 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:audio_service/audio_service.dart';
 
 class HomeTab extends StatefulWidget {
-
   @override
   _HomeTabState createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<HomeTab> {
-
+class _HomeTabState extends State<HomeTab>
+    with AutomaticKeepAliveClientMixin<HomeTab> {
   @override
   bool get wantKeepAlive => true;
 
@@ -27,19 +26,19 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
     // TODO: implement initState
     fetchSongs();
     super.initState();
-
-
   }
 
   Future<void> fetchSongs() async {
     setState(() {
       loading = true;
     });
-    var updatedList = (await (_mediaLibrary.fetchItem('/songs/recently?lim=10')));
+    var updatedList =
+        (await (_mediaLibrary.fetchItem('/songs/recently?lim=10')));
     var updatedHotList = (await (_mediaLibrary.fetchItem('/songs/hot?t=m')));
-    var updatedRecommendList = Provider.of<Auth>(context, listen: false).authenticated
-        ? await (_mediaLibrary.fetchUserSongData('/me/recommend'))
-        : null;
+    var updatedRecommendList =
+        Provider.of<Auth>(context, listen: false).authenticated
+            ? await (_mediaLibrary.fetchUserSongData('/me/recommend'))
+            : null;
     setState(() {
       latestSongs = updatedList;
       hotSongs = updatedHotList;
@@ -48,11 +47,13 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
     });
   }
 
-
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    if (loading) return Center(child: CircularProgressIndicator(),);
+    if (loading)
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     return RefreshIndicator(
       onRefresh: _pullRefresh,
       child: Padding(
@@ -64,13 +65,14 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
               Consumer<Auth>(builder: (context, auth, child) {
                 if (auth.authenticated) {
                   // fetchSongs();
-                  return HorizonMusicList(name: "Recommend Music", mediaItems: recommendSongs);
+                  return HorizonMusicList(
+                      name: "Recommend Music", mediaItems: recommendSongs);
                 } else {
                   return SizedBox();
                 }
-              }
-              ),
-              HorizonMusicList(name: "Recently Upload", mediaItems: latestSongs),
+              }),
+              HorizonMusicList(
+                  name: "Recently Upload", mediaItems: latestSongs),
               HorizonMusicList(name: "Hot Music", mediaItems: hotSongs),
             ],
           ),
@@ -83,5 +85,3 @@ class _HomeTabState extends State<HomeTab> with AutomaticKeepAliveClientMixin<Ho
     await fetchSongs();
   }
 }
-
-

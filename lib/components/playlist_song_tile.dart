@@ -9,7 +9,9 @@ import 'package:imusic_mobile/utils/MediaItemExtensions.dart';
 class PlaylistSongTile extends StatelessWidget {
   const PlaylistSongTile({
     Key? key,
-    required this.mediaItem, required this.playlistId, required this.reload,
+    required this.mediaItem,
+    required this.playlistId,
+    required this.reload,
   }) : super(key: key);
 
   final MediaItem mediaItem;
@@ -113,11 +115,11 @@ class PlaylistSongTile extends StatelessWidget {
                         case 'addToPlaylist':
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => AddSongToPlaylistDialog(
-                                    mediaItem: mediaItem
-                                  )));
+                                  mediaItem: mediaItem)));
                           break;
                         case 'removeFromPlaylist':
-                          await MyAudioService.removeSongFromPlaylist(playlistId, mediaItem.getServerId());
+                          await MyAudioService.removeSongFromPlaylist(
+                              playlistId, mediaItem.getServerId());
                           reload();
                           break;
                       }
@@ -133,10 +135,10 @@ class PlaylistSongTile extends StatelessWidget {
                         value: 'addToPlaylist',
                         child: Text('Add to Playlist'),
                       ),
-                          PopupMenuItem<String>(
-                            value: 'removeFromPlaylist',
-                            child: Text('Remove from playlist'),
-                          ),
+                      PopupMenuItem<String>(
+                        value: 'removeFromPlaylist',
+                        child: Text('Remove from playlist'),
+                      ),
                     ],
                   ),
                 ],
