@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/MediaState.dart';
+import 'package:imusic_mobile/components/marque_text.dart';
 import 'package:marquee/marquee.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -56,37 +57,9 @@ class _PlayerTabState extends State<PlayerTab> {
                                                 'assets/images/no_artwork.png'))
                                         as ImageProvider),
                           ),
-                          // (mediaItem?.artUri == null) ? Image(image: AssetImage('assets/images/no_artwork.png')) : Image.network(mediaItem!.artUri.toString()),
                         ),
                         SizedBox(height: 15.0),
-                        SizedBox(
-                          height: 30,
-                          child: Marquee(
-                            text: mediaItem?.title ?? "Unknown",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 20.0
-                            ),
-                            scrollAxis: Axis.horizontal,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            blankSpace: 20.0,
-                            velocity: 50.0,
-                            pauseAfterRound: Duration(seconds: 1),
-                            startPadding: 0.0,
-                            accelerationDuration: Duration(seconds: 1),
-                            accelerationCurve: Curves.linear,
-                            decelerationDuration: Duration(milliseconds: 500),
-                            decelerationCurve: Curves.easeOut,
-                            startAfter: Duration(seconds: 2),
-                          ),
-                        ),
-                        // Text(
-                        //   mediaItem?.title ?? "Unknown",
-                        //   overflow: TextOverflow.ellipsis,
-                        //   maxLines: 1,
-                        //   style: TextStyle(
-                        //       fontSize: 20.0, fontWeight: FontWeight.w500),
-                        // ),
+                        MarqueeText(text: mediaItem?.title ?? "Unknown", fontSize: 25),
                         Text(
                           mediaItem?.artist ?? "Unknown",
                           overflow: TextOverflow.ellipsis,
@@ -200,19 +173,6 @@ class _PlayerTabState extends State<PlayerTab> {
                         final repeatMode =
                             snapshot.data ?? AudioServiceRepeatMode.none;
                         return _loopButton(repeatMode);
-                        //   IconButton(
-                        //   icon: (repeatMode == AudioServiceRepeatMode.one)
-                        //       ? Icon(Icons.repeat_one_rounded)
-                        //       : Icon(
-                        //           Icons.repeat_rounded,
-                        //           color: Colors.black38,
-                        //         ),
-                        //   iconSize: 32,
-                        //   onPressed: () {
-                        //     AudioService.setRepeatMode(
-                        //         AudioServiceRepeatMode.one);
-                        //   },
-                        // );
                       }),
                 ],
                 mainAxisAlignment: MainAxisAlignment.center,
