@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:imusic_mobile/pages/add_song_to_playlist_dialog.dart';
 
 
 class NowPlayingTile extends StatelessWidget {
@@ -43,23 +44,23 @@ class NowPlayingTile extends StatelessWidget {
                   height: MediaQuery.of(context).size.height*0.1,
                   child: Row(
                     children: [
-                      Container(
-                        height: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.0),
-                          image: DecorationImage(
-                              image: (mediaItem.artUri != null
-                                      ? NetworkImage(mediaItem.artUri.toString())
-                                      : AssetImage('assets/images/no_artwork.png'))
-                                  as ImageProvider),
-                        ),
-                        child: AspectRatio(
-                          aspectRatio: 1 / 1,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
+                      // Container(
+                      //   height: double.infinity,
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(16.0),
+                      //     image: DecorationImage(
+                      //         image: (mediaItem.artUri != null
+                      //                 ? NetworkImage(mediaItem.artUri.toString())
+                      //                 : AssetImage('assets/images/no_artwork.png'))
+                      //             as ImageProvider),
+                      //   ),
+                      //   child: AspectRatio(
+                      //     aspectRatio: 1 / 1,
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   width: 10.0,
+                      // ),
                       Expanded(
                         child: Container(
                           width: double.infinity,
@@ -77,7 +78,7 @@ class NowPlayingTile extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(
-                                height: 10.0,
+                                height: 5.0,
                               ),
                               Text(
                                 mediaItem.artist!,
@@ -95,7 +96,7 @@ class NowPlayingTile extends StatelessWidget {
                       ),
                       // Spacer(),
                       PopupMenuButton(
-                        onSelected: onSelected,
+                        onSelected: (String value) => onSelected(value, context),
                         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                           PopupMenuItem<String>(
                             value: 'removeFromQueue',
@@ -104,7 +105,7 @@ class NowPlayingTile extends StatelessWidget {
                           ),
                           PopupMenuItem<String>(
                             value: 'addToPlaylist',
-                            child: Text('Add to Playlist'),
+                            child: Text('Add to Playlist...'),
                           ),
                         ],
                       ),
@@ -123,14 +124,18 @@ class NowPlayingTile extends StatelessWidget {
   }
 
 
-  void onSelected(String value) {
+  void onSelected(String value, BuildContext context) {
     switch (value) {
       case 'removeFromQueue': {
         AudioService.removeQueueItem(mediaItem);
-        print('removeFromQueue');
       }
         break;
-      case 'Settings':
+      case 'addToPlaylist':
+        {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => AddSongToPlaylistDialog(
+                  mediaItem: mediaItem)));
+        }
         break;
     }
   }

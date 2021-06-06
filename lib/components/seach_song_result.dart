@@ -1,10 +1,11 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/components/popup_menu_container.dart';
+import 'package:imusic_mobile/pages/add_song_to_playlist_dialog.dart';
 
 import '../AudioPlayerTask.dart';
 
-Widget SearchSongResult(
+Widget searchResult(
     {MediaItem? mediaItem, onTap, required BuildContext context}) {
   if (mediaItem == null) {
     return SizedBox();
@@ -38,14 +39,13 @@ Widget SearchSongResult(
           break;
         case 'addToPlaylist':
           {
-            print('addToPlaylist');
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => AddSongToPlaylistDialog(
+                    mediaItem: mediaItem)));
           }
           break;
-        default:
-          {
-            print('null');
-            return;
-          }
+        case null:
+          break;
       }
     },
     child: Column(

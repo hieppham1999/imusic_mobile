@@ -1,11 +1,10 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:imusic_mobile/components/marque_text.dart';
 import 'package:imusic_mobile/components/playlist_song_tile.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 import 'package:imusic_mobile/models/playlist.dart';
-
 import '../AudioPlayerTask.dart';
-import '../music_player.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   const PlaylistDetailPage({Key? key, required this.playlistId})
@@ -73,7 +72,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                           width: 10,
                         ),
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.6,
+                          width: MediaQuery.of(context).size.width * 0.5,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,14 +83,11 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      _playlist.name,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w600),
-                                    ),
+                                    Container(
+                                        child: MarqueeText(
+                                            text: _playlist.name,
+                                            fontSize: 24),
+                                    constraints: BoxConstraints(maxWidth: 150),),
                                     SizedBox(
                                       width: 8,
                                     ),
@@ -144,20 +140,17 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                                               androidEnableQueue: true,
                                             );
                                           }
-                                          await AudioService.updateQueue(
-                                              _songs);
+                                          await AudioService.updateQueue(_songs);
+                                          // await AudioService.skipToQueueItem(_songs.first.id);
                                           await AudioService.setShuffleMode(AudioServiceShuffleMode.all);
+                                          await AudioService.play();
+                                          Navigator.of(context).pushNamed('/player');
 
-                                          await AudioService.skipToQueueItem(
-                                              _songs.first.id);
-                                          await Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MusicPlayer()));
                                         }
                                       },
+                                      // Shuffle play Button
                                       child: Text(
-                                        'Shuffle play',
+                                        'SHUFFLE PLAY',
                                         style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.black87),
@@ -186,7 +179,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 15,
                     child: Container(
                       color: Colors.grey.shade200,
                     ),
@@ -202,14 +195,17 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     if (_songs.isEmpty) return Expanded(child: Center(child: Text('No Items'),));
     else {
       return Expanded(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: _songs.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) => PlaylistSongTile(
-            mediaItem: _songs[index],
-            playlistId: _playlist.id,
-            reload: () => getData(_playlist.id),
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: _songs.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) => PlaylistSongTile(
+              mediaItem: _songs[index],
+              playlistId: _playlist.id,
+              reload: () => getData(_playlist.id),
+            ),
           ),
         ),
       );

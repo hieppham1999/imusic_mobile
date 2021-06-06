@@ -2,9 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-
 import '../QueueState.dart';
-import '../music_player.dart';
 
 class NowPlayingBar extends StatefulWidget {
   const NowPlayingBar({Key? key}) : super(key: key);
@@ -22,20 +20,19 @@ class _NowPlayingBarState extends State<NowPlayingBar> {
           .distinct(),
       builder: (context, snapshot) {
         final processingState = snapshot.data ?? AudioProcessingState.none;
+        final queue = AudioService.queue;
         return Visibility(
-          visible: processingState != AudioProcessingState.none ? true : false,
+          visible: (processingState != AudioProcessingState.none && queue != null && queue.isNotEmpty ) ? true : false,
           child: Container(
             height: MediaQuery.of(context).size.height * 0.12,
             child: TextButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => MusicPlayer(),
-                ));
+                Navigator.of(context).pushNamed('/player');
               },
               style: ButtonStyle(
                   enableFeedback: false,
-                  overlayColor: MaterialStateProperty.all<Color>(
-                      Colors.black.withOpacity(0.0)),
+                  // overlayColor: MaterialStateProperty.all<Color>(
+                  //     Colors.black.withOpacity(0.0)),
                   backgroundColor: MaterialStateProperty.all<Color>(
                       Colors.black.withOpacity(0.7))),
               child: StreamBuilder<QueueState>(
@@ -54,7 +51,8 @@ class _NowPlayingBarState extends State<NowPlayingBar> {
                           height: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
-                            image: DecorationImage(image: artCover),
+                            image: DecorationImage(
+                                image: ResizeImage(artCover, height: 80)),
                           ),
                           child: AspectRatio(
                             aspectRatio: 1 / 1,
@@ -145,19 +143,18 @@ class _NowPlayingBarState extends State<NowPlayingBar> {
                             return InkWell(
                               child: notHasNext
                                   ? Icon(
-                                Icons.skip_next_rounded,
-                                color: Colors.grey,
-                                size: 40,
-                              )
+                                      Icons.skip_next_rounded,
+                                      color: Colors.grey,
+                                      size: 40,
+                                    )
                                   : Icon(
-                                Icons.skip_next_rounded,
-                                size: 40,
-                              ),
+                                      Icons.skip_next_rounded,
+                                      size: 40,
+                                    ),
                               // borderRadius: BorderRadius.circular(100),
                               customBorder: CircleBorder(),
-                              onTap: notHasNext
-                                  ? null
-                                  : AudioService.skipToNext,
+                              onTap:
+                                  notHasNext ? null : AudioService.skipToNext,
                             );
                           },
                         ),

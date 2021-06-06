@@ -1,8 +1,8 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/components/horizon_music_list.dart';
+import 'package:imusic_mobile/models/myAudioService.dart';
 
-import '../MediaLibrary.dart';
 
 class GenreTab extends StatefulWidget {
   @override
@@ -14,30 +14,31 @@ class _GenreTabState extends State<GenreTab> with AutomaticKeepAliveClientMixin<
   @override
   bool get wantKeepAlive => true;
 
-  MediaLibrary _songsByGenre = new MediaLibrary();
-  List<MediaItem>? popGenreItems = [];
-  List<MediaItem>? edmGenreItems = [];
-  List<MediaItem>? rockGenreItems = [];
+  List<MediaItem>? popItems = [];
+  List<MediaItem>? edmItems = [];
+  List<MediaItem>? rockItems = [];
+  List<MediaItem>? hipHopItems = [];
   var loading = false;
 
   @override
   void initState() {
     fetchSongs();
     super.initState();
-
   }
 
   Future<void> fetchSongs() async {
     setState(() {
       loading = true;
     });
-    var popList = (await (_songsByGenre.fetchItem('/songs/genre/10?lim=10')));
-    var edmList = (await (_songsByGenre.fetchItem('/songs/genre/3?lim=10')));
-    var rockList = (await (_songsByGenre.fetchItem('/songs/genre/13?lim=10')));
+    var popList = (await (MyAudioService.getSongByGenre(genreId: 10, limit: 10)));
+    var edmList = (await (MyAudioService.getSongByGenre(genreId: 3, limit: 10)));
+    var rockList = (await (MyAudioService.getSongByGenre(genreId: 13, limit: 10)));
+    var hipHopList = (await (MyAudioService.getSongByGenre(genreId: 4, limit: 10)));
     setState(() {
-      popGenreItems = popList;
-      edmGenreItems = edmList;
-      rockGenreItems = rockList;
+      popItems = popList;
+      edmItems = edmList;
+      rockItems = rockList;
+      hipHopItems = hipHopList;
       loading = false;
     });
   }
@@ -49,15 +50,15 @@ class _GenreTabState extends State<GenreTab> with AutomaticKeepAliveClientMixin<
     return RefreshIndicator(
       onRefresh: _pullRefresh,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-              HorizonMusicList(name: "Pop", mediaItems: popGenreItems),
-              HorizonMusicList(name: "EDM", mediaItems: edmGenreItems),
-              HorizonMusicList(name: "Rock", mediaItems: rockGenreItems),
+              HorizonMusicList(name: "POP", mediaItems: popItems),
+              HorizonMusicList(name: "EDM", mediaItems: edmItems),
+              HorizonMusicList(name: "ROCK", mediaItems: rockItems),
+              HorizonMusicList(name: "HIP-HOP", mediaItems: hipHopItems),
             ],
           ),
         ),

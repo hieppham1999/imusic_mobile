@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:imusic_mobile/pages/add_song_to_playlist_dialog.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 import '../AudioPlayerTask.dart';
-import '../music_player.dart';
 import 'package:imusic_mobile/utils/MediaItemExtensions.dart';
 
 class PlaylistSongTile extends StatelessWidget {
@@ -34,9 +33,7 @@ class PlaylistSongTile extends StatelessWidget {
                   androidEnableQueue: true,
                 );
               }
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => MusicPlayer(),
-              ));
+              Navigator.of(context).pushNamed('/player');
 
               await AudioService.addQueueItem(mediaItem);
               await AudioService.skipToQueueItem(mediaItem.id);
@@ -133,7 +130,7 @@ class PlaylistSongTile extends StatelessWidget {
                       ),
                       PopupMenuItem<String>(
                         value: 'addToPlaylist',
-                        child: Text('Add to Playlist'),
+                        child: Text('Add to Playlist...'),
                       ),
                       PopupMenuItem<String>(
                         value: 'removeFromPlaylist',

@@ -1,10 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
-import 'package:imusic_mobile/components/seach_song_reult.dart';
+import 'package:imusic_mobile/components/seach_song_result.dart';
 
 import '../AudioPlayerTask.dart';
-import '../music_player.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -53,7 +52,7 @@ class _SearchPageState extends State<SearchPage> {
           shrinkWrap: true,
             itemCount: _mediaItems.length,
             scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) => SearchSongResult(
+            itemBuilder: (context, index) => searchResult(
               context: context,
                 mediaItem: _mediaItems[index],
                 onTap: () async {
@@ -64,9 +63,7 @@ class _SearchPageState extends State<SearchPage> {
                       androidEnableQueue: true,
                     );
                   }
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => MusicPlayer(),
-                  ));
+                  Navigator.of(context).pushNamed('/player');
 
                   await AudioService.addQueueItem(_mediaItems[index]);
                   await AudioService.skipToQueueItem(_mediaItems[index].id);

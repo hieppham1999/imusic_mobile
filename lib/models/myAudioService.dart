@@ -6,6 +6,85 @@ import 'package:imusic_mobile/utils/user_secure_storage.dart';
 import 'package:imusic_mobile/utils/MediaItemExtensions.dart';
 
 class MyAudioService {
+
+  static Future<List<MediaItem>> getRecommendSongForUser() async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response = await dio().get('/me/recommend', options: Dio.Options(headers: {'Authorization': 'Bearer $token'}));
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
+  }
+
+  static Future<List<MediaItem>> getHotSong({String? time}) async {
+    try {
+      Dio.Response response = await dio()
+          .get('/songs/hot', queryParameters: {'t': time});
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
+  }
+
+  static Future<List<MediaItem>> getNewSongs({int? limit}) async {
+    try {
+      Dio.Response response = await dio()
+          .get('/songs/new', queryParameters: {'lim': limit});
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
+  }
+
+  static Future<List<MediaItem>> getRecentlySong({int? limit}) async {
+    try {
+      Dio.Response response = await dio()
+          .get('/songs/recently', queryParameters: {'lim': limit});
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
+  }
+
+  static Future<List<MediaItem>> getSongByGenre({required int genreId, int? limit}) async {
+    try {
+      Dio.Response response = await dio()
+          .get('/songs/genre/$genreId', queryParameters: {'lim': limit});
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
+  }
+
+  static Future<List<MediaItem>> getSongByLanguage({required int languageId, int? limit}) async {
+    try {
+      Dio.Response response = await dio()
+          .get('/songs/language/$languageId', queryParameters: {'lim': limit});
+      return (response.data as List)
+          .map((x) => mediaItemFromApiJson(x))
+          .toList();
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+    return [];
+  }
+
   static Future<void> listenToItem(int serverId) async {
     try {
       String? token = await UserSecureStorage.getToken();

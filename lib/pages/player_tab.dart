@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/MediaState.dart';
 import 'package:imusic_mobile/components/marque_text.dart';
-import 'package:marquee/marquee.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../AudioPlayerTask.dart';
@@ -44,29 +43,30 @@ class _PlayerTabState extends State<PlayerTab> {
                       children: [
                         Container(
                           width: double.infinity,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: ResizeImage(
+                                      (mediaItem?.artUri != null
+                                          ? NetworkImage(mediaItem!.artUri.toString())
+                                          : AssetImage('assets/images/no_artwork.png'))
+                                      as ImageProvider, width: 200
+                                  )
+                              )
+                          ),
                           child: AspectRatio(
                             aspectRatio: 1 / 1,
-                            child: FadeInImage(
-                                placeholder:
-                                    AssetImage('assets/images/no_artwork.png'),
-                                image:
-                                    (mediaItem != null
-                                            ? NetworkImage(
-                                                mediaItem.artUri.toString())
-                                            : AssetImage(
-                                                'assets/images/no_artwork.png'))
-                                        as ImageProvider),
                           ),
                         ),
                         SizedBox(height: 15.0),
                         MarqueeText(text: mediaItem?.title ?? "Unknown", fontSize: 25),
-                        Text(
-                          mediaItem?.artist ?? "Unknown",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.w400),
-                        ),
+                        MarqueeText(text: mediaItem?.artist ?? "Unknown", fontSize: 16, fontWeight: FontWeight.w400,)
+                        // Text(
+                        //   mediaItem?.artist ?? "Unknown",
+                        //   overflow: TextOverflow.ellipsis,
+                        //   maxLines: 1,
+                        //   style: TextStyle(
+                        //       fontSize: 16.0, fontWeight: FontWeight.w400),
+                        // ),
                       ],
                     ),
                   );
@@ -178,17 +178,17 @@ class _PlayerTabState extends State<PlayerTab> {
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
               // Display the processing state.
-              // StreamBuilder<AudioProcessingState>(
-              //   stream: AudioService.playbackStateStream
-              //       .map((state) => state.processingState)
-              //       .distinct(),
-              //   builder: (context, snapshot) {
-              //     final processingState =
-              //         snapshot.data ?? AudioProcessingState.none;
-              //     return Text(
-              //         "Processing state: ${describeEnum(processingState)}");
-              //   },
-              // ),
+              StreamBuilder<AudioProcessingState>(
+                stream: AudioService.playbackStateStream
+                    .map((state) => state.processingState)
+                    .distinct(),
+                builder: (context, snapshot) {
+                  final processingState =
+                      snapshot.data ?? AudioProcessingState.none;
+                  return Text(
+                      "Processing state: ${describeEnum(processingState)}");
+                },
+              ),
               // // Display the latest custom event.
               // StreamBuilder(
               //   stream: AudioService.customEventStream,

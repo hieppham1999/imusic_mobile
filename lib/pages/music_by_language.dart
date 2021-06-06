@@ -1,17 +1,20 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:imusic_mobile/components/now_playing_bar.dart';
 import 'package:imusic_mobile/components/song_list_tile.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 
-class ListenHistoriesPage extends StatefulWidget {
-  const ListenHistoriesPage({Key? key}) : super(key: key);
+class MusicByLanguagePage extends StatefulWidget {
+  const MusicByLanguagePage({Key? key,required this.languageName, required this.languageId}) : super(key: key);
+
+  final int languageId;
+  final String languageName;
 
   @override
-  _ListenHistoriesPageState createState() => _ListenHistoriesPageState();
+  _MusicByLanguagePageState createState() => _MusicByLanguagePageState();
 }
 
-class _ListenHistoriesPageState extends State<ListenHistoriesPage> {
+class _MusicByLanguagePageState extends State<MusicByLanguagePage> {
 
   bool _isLoading = false;
 
@@ -19,7 +22,7 @@ class _ListenHistoriesPageState extends State<ListenHistoriesPage> {
 
   @override
   void initState() {
-    fetchHistories();
+    fetchData();
     super.initState();
   }
 
@@ -27,13 +30,13 @@ class _ListenHistoriesPageState extends State<ListenHistoriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(widget.languageName),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text('Histories'),
       ),
       bottomNavigationBar: NowPlayingBar(),
       body: (_isLoading) ?
@@ -45,7 +48,7 @@ class _ListenHistoriesPageState extends State<ListenHistoriesPage> {
           itemCount: _items.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) => SongListTile(
-              mediaItem: _items[index],
+            mediaItem: _items[index],
           ),
 
         ),
@@ -53,16 +56,17 @@ class _ListenHistoriesPageState extends State<ListenHistoriesPage> {
     );
   }
 
-  fetchHistories() async{
+  fetchData() async{
     setState(() {
       _isLoading = true;
     });
 
-    var updatedPlaylistSongs = await MyAudioService.getUserListenHistories();
+    var updatedItems = await MyAudioService.getSongByLanguage(languageId: widget.languageId, limit: 10);
 
     setState(() {
       _isLoading = false;
-      _items = updatedPlaylistSongs;
+      _items = updatedItems;
     });
   }
+
 }

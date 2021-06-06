@@ -187,7 +187,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     child: const Text('CREATE'),
                     onPressed: () async {
                       print(typedValue);
-                      MyAudioService.createPlaylist(typedValue)
+                      await MyAudioService.createPlaylist(typedValue)
                           .then((response) {
                         print('create successfully!');
                       });
@@ -219,7 +219,7 @@ class _SystemPadding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context);
+    // var mediaQuery = MediaQuery.of(context);
     return new AnimatedContainer(
         // padding: mediaQuery.viewInsets,
         duration: const Duration(milliseconds: 300),

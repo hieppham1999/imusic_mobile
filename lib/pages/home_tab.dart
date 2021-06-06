@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:imusic_mobile/MediaLibrary.dart';
 import 'package:imusic_mobile/components/horizon_music_list.dart';
+import 'package:imusic_mobile/models/myAudioService.dart';
 import 'package:imusic_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:audio_service/audio_service.dart';
@@ -15,7 +15,6 @@ class _HomeTabState extends State<HomeTab>
   @override
   bool get wantKeepAlive => true;
 
-  MediaLibrary _mediaLibrary = new MediaLibrary();
   List<MediaItem>? latestSongs = [];
   List<MediaItem>? hotSongs = [];
   List<MediaItem>? recommendSongs = [];
@@ -23,7 +22,6 @@ class _HomeTabState extends State<HomeTab>
 
   @override
   void initState() {
-    // TODO: implement initState
     fetchSongs();
     super.initState();
   }
@@ -32,12 +30,11 @@ class _HomeTabState extends State<HomeTab>
     setState(() {
       loading = true;
     });
-    var updatedList =
-        (await (_mediaLibrary.fetchItem('/songs/recently?lim=10')));
-    var updatedHotList = (await (_mediaLibrary.fetchItem('/songs/hot?t=m')));
+    var updatedList = (await (MyAudioService.getRecentlySong(limit: 10)));
+    var updatedHotList = (await (MyAudioService.getHotSong(time: 'm')));
     var updatedRecommendList =
         Provider.of<Auth>(context, listen: false).authenticated
-            ? await (_mediaLibrary.fetchUserSongData('/me/recommend'))
+            ? await (MyAudioService.getRecommendSongForUser())
             : null;
     setState(() {
       latestSongs = updatedList;
@@ -57,7 +54,7 @@ class _HomeTabState extends State<HomeTab>
     return RefreshIndicator(
       onRefresh: _pullRefresh,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

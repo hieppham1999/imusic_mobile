@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:imusic_mobile/pages/add_song_to_playlist_dialog.dart';
 
 import '../AudioPlayerTask.dart';
-import '../music_player.dart';
 
 class SongListTile extends StatelessWidget {
   const SongListTile({
@@ -29,9 +28,7 @@ class SongListTile extends StatelessWidget {
                   androidEnableQueue: true,
                 );
               }
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => MusicPlayer(),
-              ));
+              Navigator.of(context).pushNamed('/player');
 
               await AudioService.addQueueItem(mediaItem);
               await AudioService.skipToQueueItem(mediaItem.id);
@@ -46,10 +43,12 @@ class SongListTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16.0),
                       image: DecorationImage(
-                          image: (mediaItem.artUri != null
+                          image: ResizeImage(
+                              (mediaItem.artUri != null
                                   ? NetworkImage(mediaItem.artUri.toString())
                                   : AssetImage('assets/images/no_artwork.png'))
-                              as ImageProvider),
+                              as ImageProvider, width: 200
+                          )),
                     ),
                     child: AspectRatio(
                       aspectRatio: 1 / 1,
@@ -123,7 +122,7 @@ class SongListTile extends StatelessWidget {
                       ),
                       PopupMenuItem<String>(
                         value: 'addToPlaylist',
-                        child: Text('Add to Playlist'),
+                        child: Text('Add to Playlist...'),
                       ),
                     ],
                   ),

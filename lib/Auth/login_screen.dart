@@ -173,8 +173,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextButton(
                           onPressed: (){
                             Navigator.of(context).pushReplacementNamed('/register');
-                            // Navigator.of(context).push(
-                            //     MaterialPageRoute(builder: (context) => RegisterScreen()));
                           },
                           child: Text(
                             'Sign up',
