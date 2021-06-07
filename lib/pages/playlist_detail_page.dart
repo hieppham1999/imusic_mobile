@@ -1,10 +1,12 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ReorderableList;
+import 'package:flutter/cupertino.dart' hide ReorderableList;
 import 'package:imusic_mobile/components/marque_text.dart';
 import 'package:imusic_mobile/components/playlist_song_tile.dart';
 import 'package:imusic_mobile/models/myAudioService.dart';
 import 'package:imusic_mobile/models/playlist.dart';
 import '../AudioPlayerTask.dart';
+import 'package:imusic_mobile/utils/MediaItemExtensions.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   const PlaylistDetailPage({Key? key, required this.playlistId})
@@ -20,6 +22,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   bool _isLoading = false;
   Playlist _playlist = Playlist(id: 0, name: '', tracks: 0, lastUpdated: '');
   String appBarTile = 'Playlist';
+  bool _isListChanged = false;
 
   List<MediaItem> _songs = [];
 
@@ -34,6 +37,37 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTile),
+        actions: [
+          (_isListChanged)
+              ? TextButton(
+                  onPressed: () async {
+                    // [{ for(var item in _songs) "song_id": item.getServerId(), "order": _songs.indexOf(item) }]
+                    final songOrder = _songs.map((item) {
+                      return {
+                        "song_id": item.getServerId(),
+                        "order": _songs.indexOf(item)
+                      };
+                    }).toList();
+
+                    var responseCode = await (MyAudioService.modifyPlaylist(
+                        playlistId: widget.playlistId, order: songOrder));
+                    if (responseCode == 200) {
+                      setState(() {
+                        _isListChanged = false;
+                      });
+                      final snackBar = SnackBar(
+                          content: Text('Playlist updated successfully!'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      return;
+                    }
+                  },
+                  child: Text(
+                    'SAVE',
+                    style: TextStyle(color: Colors.white),
+                  ))
+              : Container(),
+        ],
       ),
       body: (_isLoading)
           ? Center(
@@ -84,10 +118,11 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
-                                        child: MarqueeText(
-                                            text: _playlist.name,
-                                            fontSize: 24),
-                                    constraints: BoxConstraints(maxWidth: 150),),
+                                      child: MarqueeText(
+                                          text: _playlist.name, fontSize: 24),
+                                      constraints:
+                                          BoxConstraints(maxWidth: 150),
+                                    ),
                                     SizedBox(
                                       width: 8,
                                     ),
@@ -140,12 +175,14 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                                               androidEnableQueue: true,
                                             );
                                           }
-                                          await AudioService.updateQueue(_songs);
+                                          await AudioService.updateQueue(
+                                              _songs);
                                           // await AudioService.skipToQueueItem(_songs.first.id);
-                                          await AudioService.setShuffleMode(AudioServiceShuffleMode.all);
+                                          await AudioService.setShuffleMode(
+                                              AudioServiceShuffleMode.all);
                                           await AudioService.play();
-                                          Navigator.of(context).pushNamed('/player');
-
+                                          Navigator.of(context)
+                                              .pushNamed('/player');
                                         }
                                       },
                                       // Shuffle play Button
@@ -184,32 +221,49 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                       color: Colors.grey.shade200,
                     ),
                   ),
-                  buildItems(),
+                  _buildPlaylistItems(),
                 ],
               ),
             ),
     );
   }
 
-  Expanded buildItems() {
-    if (_songs.isEmpty) return Expanded(child: Center(child: Text('No Items'),));
-    else {
+  Expanded _buildPlaylistItems() {
+    if (_songs.isEmpty) {
       return Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _songs.length,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) => PlaylistSongTile(
+          child: Center(
+              child: Text('No Items'),
+      ));
+    } else
+      return Expanded(
+        child: ReorderableListView.builder(
+          // padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+          onReorder: (int oldIndex, int newIndex) {
+            setState(() {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              _isListChanged = true;
+              final MediaItem item = _songs.removeAt(oldIndex);
+              _songs.insert(newIndex, item);
+            });
+          },
+          itemCount: _songs.length,
+          itemBuilder: (BuildContext context, int index) {
+            return PlaylistSongTile(
+              key: Key('$index'),
               mediaItem: _songs[index],
               playlistId: _playlist.id,
-              reload: () => getData(_playlist.id),
-            ),
-          ),
+              reload: () {
+                setState(() {
+                  _isListChanged = true;
+                  _songs.removeAt(index);
+                });
+              },
+            );
+          },
         ),
       );
-    }
   }
 
   void getData(int playlistId) async {

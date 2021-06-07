@@ -49,7 +49,7 @@ class _PlayerTabState extends State<PlayerTab> {
                                       (mediaItem?.artUri != null
                                           ? NetworkImage(mediaItem!.artUri.toString())
                                           : AssetImage('assets/images/no_artwork.png'))
-                                      as ImageProvider, width: 200
+                                      as ImageProvider, width: 300
                                   )
                               )
                           ),
@@ -178,17 +178,17 @@ class _PlayerTabState extends State<PlayerTab> {
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
               // Display the processing state.
-              StreamBuilder<AudioProcessingState>(
-                stream: AudioService.playbackStateStream
-                    .map((state) => state.processingState)
-                    .distinct(),
-                builder: (context, snapshot) {
-                  final processingState =
-                      snapshot.data ?? AudioProcessingState.none;
-                  return Text(
-                      "Processing state: ${describeEnum(processingState)}");
-                },
-              ),
+              // StreamBuilder<AudioProcessingState>(
+              //   stream: AudioService.playbackStateStream
+              //       .map((state) => state.processingState)
+              //       .distinct(),
+              //   builder: (context, snapshot) {
+              //     final processingState =
+              //         snapshot.data ?? AudioProcessingState.none;
+              //     return Text(
+              //         "Processing state: ${describeEnum(processingState)}");
+              //   },
+              // ),
               // // Display the latest custom event.
               // StreamBuilder(
               //   stream: AudioService.customEventStream,

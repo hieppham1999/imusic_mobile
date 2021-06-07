@@ -17,6 +17,7 @@ class PlaylistSongTile extends StatelessWidget {
   final int playlistId;
   final Function() reload;
 
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -40,7 +41,7 @@ class PlaylistSongTile extends StatelessWidget {
             },
             child: Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.13,
+              height: MediaQuery.of(context).size.height * 0.10,
               child: Row(
                 children: [
                   Container(
@@ -115,8 +116,8 @@ class PlaylistSongTile extends StatelessWidget {
                                   mediaItem: mediaItem)));
                           break;
                         case 'removeFromPlaylist':
-                          await MyAudioService.removeSongFromPlaylist(
-                              playlistId, mediaItem.getServerId());
+                          // await MyAudioService.removeSongFromPlaylist(
+                          //     playlistId, mediaItem.getServerId());
                           reload();
                           break;
                       }

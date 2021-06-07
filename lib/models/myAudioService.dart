@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart' as Dio;
 import 'package:imusic_mobile/models/playlist.dart';
@@ -212,6 +214,25 @@ class MyAudioService {
                   return status! < 500;
                 },
               ));
+      return response.statusCode;
+    } catch (e, stacktrace) {
+      print('caught $e : $stacktrace');
+    }
+  }
+
+  static Future<int?> modifyPlaylist(
+  {required int playlistId, required List<Map<String, dynamic>> order} ) async {
+    try {
+      String? token = await UserSecureStorage.getToken();
+      Dio.Response response =
+      await dio().put('/playlists/' + playlistId.toString() + '/modify',
+          data: json.encode(order),
+          options: Dio.Options(
+            headers: {'Authorization': 'Bearer $token'},
+            validateStatus: (status) {
+              return status! < 500;
+            },
+          ));
       return response.statusCode;
     } catch (e, stacktrace) {
       print('caught $e : $stacktrace');

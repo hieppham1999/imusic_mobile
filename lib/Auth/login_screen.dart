@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:audio_service/audio_service.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:imusic_mobile/services/auth.dart';
 import 'package:provider/provider.dart';
+
+import '../AudioPlayerTask.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -159,6 +162,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           int statusCode = (await Provider.of<Auth>(context, listen: false).
                             login(creds: creds))!;
                           if (statusCode == 200) {
+                            // await AudioService.stop();
+                            // await AudioService.start(
+                            //   backgroundTaskEntrypoint: audioPlayerTaskEntrypoint,
+                            //   androidResumeOnClick: true,
+                            //   androidEnableQueue: true,
+                            // );
                             Navigator.of(context)
                                 .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
                           }
